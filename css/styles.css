@@ -28,10 +28,6 @@ html {
 	}
 }
 
-.icons-social i {
-	font-size: 3em;
-}
-
 /* Custom Styles */
 
 main {
@@ -41,31 +37,143 @@ main {
 	justify-content: center;
 	padding: 0 30px;
 	text-align: center;
+	background: var(--background-color);
+	color: var(--main-bg-color);
 }
 
-main > .intro {
+main>.intro {
 	font-family: 'Reem Kufi', sans-serif;
-	font-size: 3.75em;
+	font-size: 3em;
 	font-weight: 600;
 }
 
-main > .tagline {
-	font-size: 1.5rem;
+main>.tagline {
+	font-size: 1.2rem;
 	margin: 1.5rem 0;
 	font-weight: 100;
 }
 
 .icons-social i {
 	padding: 10px;
+	font-size: 1.5em;
 }
 
-.devto {
-	margin-bottom: -0.20rem;
+.icons-social a {
+	color: var(--main-bg-color);
 }
 
-.devto svg {
-	margin-bottom: -0.20rem;
-	margin-left: 0.675rem;;
-	width: 2.65rem;
-	height: 2.65rem;
+.icons-social a svg path {
+	fill: var(--main-bg-color);
 }
+
+
+.projects h1 {
+	padding: 0px;
+}
+
+/* css for the shiny buttons */
+
+.btn {
+	cursor: pointer;
+	margin: 10px;
+	border-radius: 5px;
+	text-decoration: none;
+	padding: 10px 10px;
+	font-size: 0.9em;
+	transition: .3s;
+	-webkit-transition: .3s;
+	-moz-transition: .3s;
+	-o-transition: .3s;
+	display: inline-block;
+}
+
+.btn.orange:hover {
+	cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAACVBMVEX///8AAAD///9+749PAAAAAXRSTlMAQObYZgAAAEdJREFUeAF90FEKgDAMwFDT+x9awYCRwjL282CM9joFsGie/swYy6oiENW8RaJ5PBvxvCpqxfwetTOqeyo+Rgx3JjnrCxNa3TwuAY6NyoMhAAAAAElFTkSuQmCC), auto;
+	/* middle finger =======> cursor: url(http://cur.cursors-4u.net/symbols/sym-1/sym46.cur), auto; */
+}
+.btn.soon:hover {
+	cursor:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAZCAMAAAD63NUrAAAACVBMVEX///8AAAD///9+749PAAAAAXRSTlMAQObYZgAAAFZJREFUeNqdzksKwDAIAFHH+x+6lIYOVPOhs5OHJnES/5UkYKEkU7xjijSIm50iFh4fAXgYDd/yumVVRSwsqq/nRA3xVK0oo06d5U6DpQZ7PV7lMxH7LkaQAbYFwryzAAAAAElFTkSuQmCC),auto;
+}
+
+.orange {
+	color: var(--button-bg-color);
+	border: 2px var(--button-bg-color) solid;
+}
+
+.orange:hover {
+	color: var(--background-color);
+	background-color: var(--button-bg-color);
+}
+
+.soon {
+	border: 2px solid;
+}
+
+.buttons {
+	text-align: center;
+}
+
+/* CSS for divider */
+
+.divider {
+	/* minor cosmetics */
+	display: table;
+	font-family: 'Reem Kufi', sans-serif;
+	font-size: 1.5em;
+	font-weight: 400;
+	text-align: center;
+	width: 75%;
+	/* divider width */
+	margin: 10px auto 5px;
+	/* spacing above/below */
+}
+
+.divider span {
+	display: table-cell;
+	position: relative;
+}
+
+.divider span:first-child, .divider span:last-child {
+	width: 50%;
+	top: .8em;
+	/* adjust vertical align */
+	-moz-background-size: 100% 2px;
+	/* line width */
+	background-size: 100% 2px;
+	/* line width */
+	background-position: 0 0, 0 100%;
+	background-repeat: no-repeat;
+}
+
+.divider span:first-child {
+	/* color changes in here */
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(transparent), to(var(--main-bg-color)));
+	background-image: -webkit-linear-gradient(180deg, transparent, var(--main-bg-color));
+	background-image: -moz-linear-gradient(180deg, transparent, var(--main-bg-color));
+	background-image: -o-linear-gradient(180deg, transparent, var(--main-bg-color));
+	background-image: linear-gradient(90deg, transparent, var(--main-bg-color));
+}
+
+.divider span:nth-child(2) {
+	padding: 0px 5px;
+	width: auto;
+	white-space: nowrap;
+}
+
+.divider span:last-child {
+	/* color changes in here */
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(var(--main-bg-color)), to(transparent));
+	background-image: -webkit-linear-gradient(180deg, var(--main-bg-color), transparent);
+	background-image: -moz-linear-gradient(180deg, var(--main-bg-color), transparent);
+	background-image: -o-linear-gradient(180deg, var(--main-bg-color), transparent);
+	background-image: linear-gradient(90deg, var(--main-bg-color), transparent);
+}
+
+/* Footer section */
+#footer {
+	position:fixed;
+	left:0px;
+	bottom:0px;
+	height:auto;
+	width:100%;
+ }
