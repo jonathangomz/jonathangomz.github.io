@@ -20,14 +20,10 @@
 
 		if (window.location.hostname === "jonathangomz.github.io" ||
 			window.location.hostname === "") {
-			console.log("ligth");
 			file = "css/themes/ligth.css";
 		} else if (window.location.hostname === "jonathangomz.github.io?dark" ||
 			window.location.hostname === "") {
 			file = "css/themes/dark.css";
-			console.log("dark");
-		} else {
-			console.log("something happend => " + window.location.hostname);	
 		}
 
 		let link = document.createElement("link");
