@@ -16,18 +16,18 @@
 	<link rel="stylesheet" href="css/styles.css">
 	
 	<script type="text/javascript">
+		let type = window.localStorage.getItem("mode");
 		let file;
+		let link;
 
-		console.log(window.location.hostname);
-		if (window.location.hostname === "jonathangomz.github.io" ||
-			window.location.hostname === "") {
-			file = "css/themes/ligth.css";
-		} else if (window.location.hostname === "jonathangomz.github.io?dark" ||
-			window.location.hostname === "") {
-			file = "css/themes/dark.css";
+		if (!type) {
+			type = "light";
+			window.localStorage.setItem("mode", type);
 		}
+			
+		file = "css/themes/"+type+".css";
 
-		let link = document.createElement("link");
+		link = document.createElement("link");
 		link.href = file;
 		link.type = "text/css";
 		link.rel = "stylesheet";
@@ -38,6 +38,7 @@
 </head>
 
 <body>
+	<button id="change_mode" class="btn change-mode">Dark mode</button>
 	<main>
 		<section class="intro">Hello, I'm Jony! :D</section>
 		<section class="tagline">Student of Computer Systems | Self-taught developer | Curious person | Writer of little
@@ -61,6 +62,25 @@
 					class="fab fa-stack-overflow"></i></a>
 		</section>
 	</main>
+	<script>
+		window.onload = function(){
+			document
+				.getElementById("change_mode")
+				.addEventListener("click", changeMode, false);
+		}
+
+		function changeMode() {
+			let mode = window.localStorage.getItem("mode");
+			if (mode === "light") 
+				window.localStorage.setItem("mode", "dark");
+			else if (mode === "dark")
+				window.localStorage.setItem("mode", "light");
+			else
+				window.localStorage.setItem("mode", "light");
+
+			window.location.reload(false);
+		}
+	</script>
 </body>
 
 </html>
