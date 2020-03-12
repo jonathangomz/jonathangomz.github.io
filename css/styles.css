@@ -1,3 +1,19 @@
+:root {
+	--font-color: #0277BD;
+	--button-bg-color: #79C753;
+	--background-color: #FAFAFA;
+	--button-mode-color:#485564;
+	--button-mode-bg-color:rgba(72, 85, 100, 0.1);
+}
+
+.dark {
+	--font-color: #fff;
+	--button-bg-color: #e67e22;
+	--background-color: #485564;
+	--button-mode-color:#FAFAFA;
+	--button-mode-bg-color:rgba(250, 250, 250, 0.1);
+}
+
 /* Typography */
 
 html {

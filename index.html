@@ -14,27 +14,6 @@
 	<link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/reset.css">
 	<link rel="stylesheet" href="css/styles.css">
-	
-	<script type="text/javascript">
-		let type = window.localStorage.getItem("mode");
-		let file;
-		let link;
-
-		if (!type) {
-			type = "light";
-			window.localStorage.setItem("mode", type);
-		}
-			
-		file = "css/themes/"+type+".css";
-
-		link = document.createElement("link");
-		link.href = file;
-		link.type = "text/css";
-		link.rel = "stylesheet";
-		link.media = "screen,print";
-
-		document.getElementsByTagName("head")[0].appendChild(link);
-	</script>
 </head>
 
 <body>
@@ -64,22 +43,18 @@
 		</section>
 	</main>
 	<script>
+		if(localStorage.getItem('theme') === "dark") {
+			document.body.classList.toggle(localStorage.getItem('theme'));
+		}
+
 		window.onload = function(){
-			document
-				.getElementById("change_mode")
-				.addEventListener("click", changeMode, false);
+			document.getElementById("change_mode")
+					.addEventListener("click", changeMode, false);
 		}
 
 		function changeMode() {
-			let mode = window.localStorage.getItem("mode");
-			if (mode === "light") 
-				window.localStorage.setItem("mode", "dark");
-			else if (mode === "dark")
-				window.localStorage.setItem("mode", "light");
-			else
-				window.localStorage.setItem("mode", "light");
-
-			window.location.reload(false);
+			document.body.classList.toggle('dark');
+			localStorage.setItem('theme', document.body.classList);
 		}
 	</script>
 </body>
