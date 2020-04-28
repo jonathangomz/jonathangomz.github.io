@@ -1,5 +1,6 @@
 :root {
 	--font-color: #0277BD;
+	--plum: #0277BD;
 	--green: #0277BD;
 	--orange: #0277BD;
 	--background-color: #FAFAFA;
@@ -8,7 +9,8 @@
 }
 
 .dark {
-	--font-color: #fff;
+	--font-color: #88498F;
+	--plum: #88498F;
 	--green: #79C753;
 	--orange: #e67e22;
 	--blue: rgb(34, 211, 211);
@@ -26,7 +28,7 @@ html {
 @media (min-width: 0px) {
 	main>.intro>.box-name>.nickname {
 		background-color: var(--background-color);
-		color: var(--font-color);
+		color: var(--green);
 	}
 }
 
@@ -83,6 +85,7 @@ section {
 }
 
 main>.intro>.box-name {
+	border: 1px solid var(--green);
 	background-color: var(--font-color);
 }
 
@@ -108,7 +111,6 @@ main>.intro>.tagline {
 .btn {
 	cursor: pointer;
 	margin: 10px;
-	border-radius: 5px;
 	text-decoration: none;
 	padding: 10px 10px;
 	font-size: 0.9em;
@@ -176,7 +178,6 @@ main>.intro>.tagline {
 /* Footer section */
 footer {
 	text-align: center;
-	background-color: var(--font-color);
 	position:fixed;
 	left:0px;
 	bottom:0px;
@@ -190,7 +191,7 @@ footer {
 }
 
 .icons-social a {
-	color: var(--background-color);
+	color: var(--font-color);
 }
 
 svg path {
