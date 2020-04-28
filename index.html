@@ -10,8 +10,9 @@
 
 	<link rel="icon" href="favicon.ico" type="image/png" />
 
+	<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Reem+Kufi|Roboto:300" rel="stylesheet">
-	<link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
 	<link rel="stylesheet" href="css/reset.css">
 	<link rel="stylesheet" href="css/styles.css">
 </head>
@@ -19,30 +20,39 @@
 <body>
 	<button id="change_mode" class="btn change-mode">Dark mode</button>
 	<main>
-		<section class="intro">Hello, I'm Jony! :D</section>
-		<section class="tagline">Student of Computer Systems | Self-taught developer | Curious person | Writer of little
-			tales | The love of mom.</section>
+		<section class="intro">
+			<div class="box-name">
+				<div class="name">Jonathan Gómez</div>
+				<div class="nickname">@jonathangomz</div>
+			</div>
+			<div class="tagline">
+				<p><i class="fas fa-chalkboard-teacher"></i> → Teacher of the Enginnering Faculty in the Montemorelos University.</p>
+				<br>
+				<p><i class="fas fa-laptop-code"></i> → Developer for IT Department in the aforementioned university.</p>
+				<br>
+				<p><i class="fas fa-feather-alt"></i> → Writer of mistery tales, love poems and code... a lot of code.</p>
+			</div>
+		</section>
 		<section class="projects">
 			<div class="divider">
-				<span></span>
-				<span>Projects</span>
-				<span></span>
+				Projects
 			</div>
 			<div class="buttons">
-				<a class="btn orange" href="https://jonathangomz.github.io/mathematical-methods/">Truth table</a>
-				<a class="btn orange" href="https://daily-quote.netlify.com/">Daily quote</a>
+				<a class="btn available" href="https://jonathangomz.github.io/mathematical-methods/">Truth table</a>
+				<a class="btn available" href="https://daily-quote.netlify.com/">Daily quote</a>
 				<a class="btn soon">Soon</a>
 			</div>
 		</section>
-		<!-- Find your icons from here - https://fontawesome.com/icons?d=gallery&s=brands -->
-		<section id="footer" class="icons-social">
+		<footer class="icons-social">
 			<a target="_blank" href="https://github.com/jonathangomz"><i class="fab fa-github"></i></a>
 			<a target="_blank" href="https://twitter.com/jonathangomz"><i class="fab fa-twitter"></i></a>
 			<a target="_blank" href="https://stackoverflow.com/story/jonathangomz"><i
-					class="fab fa-stack-overflow"></i></a>
-		</section>
-	</main>
-	<script>
+				class="fab fa-stack-overflow"></i></a>
+			</footer>
+		</main>
+
+		<script src="https://kit.fontawesome.com/e0c9df4dfd.js" crossorigin="anonymous"></script>
+		<script>
 		if(localStorage.getItem('theme') === "dark") {
 			document.body.classList.toggle(localStorage.getItem('theme'));
 		}
