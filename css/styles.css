@@ -3,6 +3,7 @@
 	--plum: #0277BD;
 	--green: #0277BD;
 	--orange: #0277BD;
+	--turquoise: #0277BD;
 	--background-color: #FAFAFA;
 	--button-mode-color:#000000;
 	--button-mode-bg-color:rgba(0, 0, 0, 0.1);
@@ -10,6 +11,7 @@
 
 .dark {
 	--font-color: #88498F;
+	--turquoise: #55D6BE;
 	--plum: #88498F;
 	--green: #79C753;
 	--orange: #e67e22;
@@ -84,6 +86,13 @@ section {
 	min-width: 10%;
 }
 
+.btn, .name, .box-name, .nickname, .tagline, .buttons>a, main {
+	transition: .3s;
+	-webkit-transition: .3s;
+	-moz-transition: .3s;
+	-o-transition: .3s;
+}
+
 main>.intro>.box-name {
 	border: 1px solid var(--green);
 	background-color: var(--font-color);
@@ -94,7 +103,6 @@ main>.intro>.box-name>.name {
 	font-family: 'Reem Kufi', sans-serif;
 	font-size: 3em;
 	font-weight: 600;
-	/*box-shadow: -11px 11px 0px 20px;*/
 }
 
 main>.intro>.tagline {
@@ -114,10 +122,6 @@ main>.intro>.tagline {
 	text-decoration: none;
 	padding: 10px 10px;
 	font-size: 0.9em;
-	transition: .3s;
-	-webkit-transition: .3s;
-	-moz-transition: .3s;
-	-o-transition: .3s;
 	display: inline-block;
 }
 
@@ -183,15 +187,15 @@ footer {
 	bottom:0px;
 	height:auto;
 	width:100%;
- }
+}
 
- .icons-social i {
+.icons-social i {
 	padding: 10px;
 	font-size: 1.5em;
 }
 
 .icons-social a {
-	color: var(--font-color);
+	color: var(--green);
 }
 
 svg path {
