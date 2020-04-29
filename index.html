@@ -55,7 +55,6 @@
 		<script>
 		if(localStorage.getItem('theme') === "dark") {
 			document.body.classList.toggle(localStorage.getItem('theme'));
-			setShadows();
 		}
 
 		window.onload = function(){
@@ -64,31 +63,8 @@
 		}
 
 		function changeMode() {
-			
-			if(localStorage.getItem('theme') === "dark") {
-				disableShadows();
-			}else {
-				setShadows();
-			}
 			document.body.classList.toggle('dark');
 			localStorage.setItem('theme', document.body.classList);
-		}
-
-		function setShadows() {
-			let shadow = "0 0 9px 2px";
-			document.querySelector('.box-name').style.boxShadow = shadow;
-			document.querySelector('.name').style.boxShadow = "inset " + shadow;
-			document.querySelector('.btn').style.boxShadow = shadow;
-			document.querySelector('.buttons .available').style.boxShadow = shadow;
-			document.querySelector('.icons-social i').style.boxShadow = shadow;
-		}
-
-		function disableShadows(){
-			document.querySelector('.box-name').style.boxShadow = "";
-			document.querySelector('.name').style.boxShadow = "";
-			document.querySelector('.btn').style.boxShadow = "";
-			document.querySelector('.buttons .available').style.boxShadow = "";
-			document.querySelector('.icons-social i').style.boxShadow = "";
 		}
 	</script>
 </body>

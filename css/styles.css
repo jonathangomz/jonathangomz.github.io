@@ -5,8 +5,9 @@
 	--orange: #0277BD;
 	--turquoise: #0277BD;
 	--background-color: #FAFAFA;
-	--button-mode-color:#000000;
+	--button-mode-color:#88498F;
 	--button-mode-bg-color:rgba(0, 0, 0, 0.1);
+	--shadows: 0;
 }
 
 .dark {
@@ -19,6 +20,7 @@
 	--background-color: #000000;
 	--button-mode-color:#FAFAFA;
 	--button-mode-bg-color:rgba(0, 0, 0, 0.1);
+	--shadows: 0 0 9px 2px;
 }
 
 /* Typography */
@@ -86,11 +88,8 @@ section {
 	min-width: 10%;
 }
 
-.btn, .name, .box-name, .nickname, .tagline, .buttons>a, main {
-	transition: .3s;
-	-webkit-transition: .3s;
-	-moz-transition: .3s;
-	-o-transition: .3s;
+.btn, .box-name, .tagline, .buttons>a, .icons-social {
+	box-shadow: var(--shadows);
 }
 
 main>.intro>.box-name {
@@ -103,6 +102,7 @@ main>.intro>.box-name>.name {
 	font-family: 'Reem Kufi', sans-serif;
 	font-size: 3em;
 	font-weight: 600;
+	box-shadow: inset var(--shadows);
 }
 
 main>.intro>.tagline {
@@ -110,8 +110,8 @@ main>.intro>.tagline {
 	color: var(--orange);
 	margin: 1.5rem 0;
 	font-weight: 100;
-	padding-bottom: 20px;
-	border-bottom: 1px solid var(--green);
+	padding: 20px;
+	border: 1px solid var(--green);
 }
 
 /* css for the shiny buttons */
@@ -123,6 +123,11 @@ main>.intro>.tagline {
 	padding: 10px 10px;
 	font-size: 0.9em;
 	display: inline-block;
+
+	transition: .3s;
+	-webkit-transition: .3s;
+	-moz-transition: .3s;
+	-o-transition: .3s;
 }
 
 .btn.available:hover {
@@ -187,6 +192,7 @@ footer {
 	bottom:0px;
 	height:auto;
 	width:100%;
+	background-color: var(--background-color);
 }
 
 .icons-social i {
