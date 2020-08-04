@@ -80,7 +80,7 @@ section {
 	height: 100%;
 }
 
-.section-header hr {
+hr {
 	border-color: var(--font-color);
 }
 
@@ -103,23 +103,16 @@ section {
 	-o-transition: .2s;
 }
 
-.card:not(.soon):hover {
-	color:var(--font-color);
-	border-radius: 5px;
-}
-
-.learned {
-	font-size: 14px;
-	margin-top: 10px;
-}
-
-.learned ul li {
-	margin-right: 4px;
+.card-details {
+	margin-bottom: 10px;
 }
 
 /* css for the shiny buttons */
 
 .btn {
+	background-color: var(--background-color);
+	border: 1px solid var(--card-font-color);
+	color: var(--card-font-color);
 	cursor: pointer;
 	margin: 10px;
 	text-decoration: none;
@@ -132,6 +125,12 @@ section {
 	-webkit-transition: .3s;
 	-moz-transition: .3s;
 	-o-transition: .3s;
+}
+
+.btn:hover {
+	background-color: var(--card-font-color);
+	background-color: var(--card-font-color);
+	color: var(--background-color);
 }
 
 .see-more {
