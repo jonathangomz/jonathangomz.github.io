@@ -1,26 +1,17 @@
 :root {
-	--font-color: #0277BD;
-	--plum: #0277BD;
-	--green: #0277BD;
-	--orange: #0277BD;
-	--turquoise: #0277BD;
-	--background-color: #FAFAFA;
-	--button-mode-color:#88498F;
-	--button-mode-bg-color:rgba(0, 0, 0, 0.1);
-	--shadows: 0;
+	--font-color: #f17300;
+	--background-color: #fafafa;
+	--card-font-color: #2A4494;
+	--mode-font-color-button: #9BC53D;
+	--mode-bg-color-button: 0, 0, 0;
 }
 
 .dark {
-	--font-color: #88498F;
-	--turquoise: #55D6BE;
-	--plum: #88498F;
-	--green: #79C753;
-	--orange: #e67e22;
-	--blue: rgb(34, 211, 211);
+	--font-color: #9BC53D;
 	--background-color: #000000;
-	--button-mode-color:#FAFAFA;
-	--button-mode-bg-color:rgba(0, 0, 0, 0.1);
-	--shadows: 0 0 9px 2px;
+	--card-font-color: #0E7C7B;
+	--mode-font-color-button: #f17300;
+	--mode-bg-color-button: 250, 250, 250;
 }
 
 /* Typography */
@@ -28,90 +19,102 @@
 html {
 	font-family: "Roboto Mono", monospace;
 }
-
-@media (min-width: 0px) {
-	main>.intro>.box-name>.nickname {
-		background-color: var(--background-color);
-		color: var(--green);
-	}
-}
-
-@media (min-width: 576px) {
-	html {
-		font-size: 14px;
-	}
-
-	main>.intro>.box-name {
-		padding: 10px 10px 20px 20px;
-	}
-
-	main>.intro>.box-name>.nickname {
-		background-color: var(--font-color);
-		color: var(--background-color);
-	}
-}
-
-@media (min-width: 768px) {
-	html {
-		font-size: 16px;
-	}
-}
-
-@media (min-width: 992px) {
-	html {
-		font-size: 18px;
-	}
-}
-
-@media (min-width: 1200px) {
-	html {
-		font-size: 20px;
-	}
-}
-
-/* Custom Styles */
-
-main {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	min-height: 100vh;
-	padding: 30px 0px;
+body {
 	background: var(--background-color);
 	color: var(--font-color);
 }
+/* Custom Styles */
+
+main, header {
+	display: grid;
+	place-items: center;
+	min-height: 100vh;
+	padding: 30px 0px;
+}
+
+header {
+	gap: 20px;
+	margin: 0 10px;
+	place-content: center;
+}
+
+header sub {
+	text-align: center;
+}
+
+span.do-blink {
+	animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+	from {
+		background-color: var(--font-color);
+	}
+	
+	to {
+		background-color: 0;
+	}
+}
+
+span.underline-blink {
+	animation: underline-blink 1s linear infinite;
+}
+
+@keyframes underline-blink {
+	100% {
+		opacity: 0;
+	}
+}
 
 section {
-	padding: inherit;
-	width: 60%;
+	display: inherit;
+	height: 100vh;
 	min-width: 10%;
+	padding: inherit;
+	place-content: center;
+	width: 60%;
 }
 
-.btn, .box-name, .tagline, .buttons>a, .icons-social {
-	box-shadow: var(--shadows);
+.projects {
+	text-align: justify;
+	height: 100%;
 }
 
-main>.intro>.box-name {
-	border: 1px solid var(--green);
-	background-color: var(--font-color);
+.section-header hr {
+	border-color: var(--font-color);
 }
 
-main>.intro>.box-name>.name {
-	background-color: var(--background-color);
-	font-family: 'Reem Kufi', sans-serif;
-	font-size: 3em;
-	font-weight: 600;
-	box-shadow: inset var(--shadows);
+.cards {
+	display: grid;
+	grid-gap: 1rem;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	margin-top: 50px;
 }
 
-main>.intro>.tagline {
-	font-size: 0.9rem;
-	color: var(--orange);
-	margin: 1.5rem 0;
-	font-weight: 100;
-	padding: 20px;
-	border: 1px solid var(--green);
+.card {
+	border: 1px solid var(--font-color);
+	padding: 12px;
+	text-decoration: none;
+	color: var(--card-font-color);
+
+	transition: .2s;
+	-webkit-transition: .2s;
+	-moz-transition: .2s;
+	-o-transition: .2s;
+}
+
+.card:not(.soon):hover {
+	color:var(--font-color);
+	border-radius: 5px;
+}
+
+.learned {
+	font-size: 14px;
+	margin-top: 10px;
+}
+
+.learned ul li {
+	margin-right: 4px;
 }
 
 /* css for the shiny buttons */
@@ -120,6 +123,7 @@ main>.intro>.tagline {
 	cursor: pointer;
 	margin: 10px;
 	text-decoration: none;
+	text-align: center;
 	padding: 10px 10px;
 	font-size: 0.9em;
 	display: inline-block;
@@ -130,80 +134,49 @@ main>.intro>.tagline {
 	-o-transition: .3s;
 }
 
-.btn.available:hover {
-	cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAACVBMVEX///8AAAD///9+749PAAAAAXRSTlMAQObYZgAAAEdJREFUeAF90FEKgDAMwFDT+x9awYCRwjL282CM9joFsGie/swYy6oiENW8RaJ5PBvxvCpqxfwetTOqeyo+Rgx3JjnrCxNa3TwuAY6NyoMhAAAAAElFTkSuQmCC), auto;
-	/* middle finger =======> cursor: url(http://cur.cursors-4u.net/symbols/sym-1/sym46.cur), auto; */
-}
-.btn.soon:hover {
-	cursor:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAZCAMAAAD63NUrAAAACVBMVEX///8AAAD///9+749PAAAAAXRSTlMAQObYZgAAAFZJREFUeNqdzksKwDAIAFHH+x+6lIYOVPOhs5OHJnES/5UkYKEkU7xjijSIm50iFh4fAXgYDd/yumVVRSwsqq/nRA3xVK0oo06d5U6DpQZ7PV7lMxH7LkaQAbYFwryzAAAAAElFTkSuQmCC),auto;
-}
-
-.available {
-	color: var(--green);
-	border: 2px var(--orange) solid;
-}
-
-.available:hover {
+.see-more {
+	background-color: var(--font-color);
 	color: var(--background-color);
-	background-color: var(--orange);
-	border: 2px var(--green) solid;
+	margin: 10px 0;
+	text-decoration: none;
+	text-align: left;
+	width: 100%;
 }
 
-.soon {
-	border: 1px solid;
-}
-
-.buttons {
-	text-align: start;
+.see-more:hover {
+	margin-right: -10px;
 }
 
 /* BUTTON DARK MODE */
 .change-mode {
-	border: 2px var(--button-mode-color) solid;
-	color: var(--button-mode-color);
-	background-color: var(--button-mode-bg-color);
-    position: fixed;
-    top: 0px;
-    right: 0px;
-    margin:10px;
+	background-color: rgba(var(--mode-bg-color-button), 0.1);
+	border: 2px rgb(var(--mode-bg-color-button)) solid;
+	border-radius: 5px;
+	color: var(--mode-font-color-button);
+	margin: 10px;
+	position: fixed;
+	right: 0px;
+	top: 0px;
 }
 
 .change-mode:hover {
+	background-color: var(--mode-font-color-button);
 	color: var(--background-color);
-	background-color: var(--button-mode-color);
-}
-
-/* CSS for Projects */
-
-.divider {
-	/* minor cosmetics */
-	display: table;
-	font-size: 1.5em;
-	font-weight: 600;
-	width: 75%;
-	padding: 10px  5px;
 }
 
 /* Footer section */
 footer {
 	text-align: center;
-	position:fixed;
-	left:0px;
-	bottom:0px;
-	height:auto;
-	width:100%;
+	position: fixed;
+	left: 0px;
+	bottom: 0px;
+	height: auto;
+	width: 100%;
 	background-color: var(--background-color);
 }
 
 .icons-social i {
+	color: var(--font-color);
+	font-size: 22px;
 	padding: 10px;
-	font-size: 1.5em;
-}
-
-.icons-social a {
-	color: var(--green);
-}
-
-svg path {
-	fill: var(--background-color);
 }

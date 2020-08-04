@@ -2,7 +2,7 @@
 
 html {
   box-sizing: border-box;
-  font-size: 12px;
+  scroll-behavior: smooth;
 }
 
 *, *:before, *:after {

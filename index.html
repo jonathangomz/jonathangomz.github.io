@@ -19,52 +19,80 @@
 
 <body>
 	<button id="change_mode" class="btn change-mode">Dark mode</button>
+	<header>
+		<h1>$ echo jonathangom<span>z</span><span class="underline-blink">_</span></h1>
+		<sub>{ name: 'Jonathan Gómez' }</sub>
+		<a class="btn see-more" href="#projects">$ ls projects<span class="underline-blink">_</span></a>
+	</header>
 	<main>
-		<section class="intro">
-			<div class="box-name">
-				<div class="name">Jonathan Gómez</div>
-				<div class="nickname">@jonathangomz</div>
+		<section id="projects" class="projects">
+			<div class="section-header">
+				<h1 class="section-title">Project<span class="blink">s</span></h1>
+				<p class="section-details">
+					Here are some projects that I just made for fun.
+				</p>
+				<hr>
 			</div>
-			<div class="tagline">
-				<p><i class="fas fa-chalkboard-teacher"></i> → Teacher of the Enginnering Faculty in the Montemorelos University.</p>
-				<br>
-				<p><i class="fas fa-laptop-code"></i> → Developer for IT Department in the aforementioned university.</p>
-				<br>
-				<p><i class="fas fa-feather-alt"></i> → Writer of mistery tales, love poems and code... a lot of code.</p>
+			<div class="cards">
+				<a class="card" target="_blank" href="https://daily-quote.netlify.app/">
+					<h3 class="card-title">Daily quote</h3>
+					<hr>
+					<p class="card-details">
+						A simple page that display a different quote every day.
+					</p>
+				</a>
+				<a class="card" target="_blank" href="https://jonathangomz.codes/TruthTableGenerator/">
+					<h3 class="card-title">Truth table</h3>
+					<hr>
+					<p class="card-details">
+						A generator of table of truth with a certain condition given.
+					</p>
+				</a>
+				<a class="card soon">
+					<h3 class="card-title">Soon...</h3>
+					<hr>
+					<p class="card-details">
+						Soon more projects.
+					</p>
+				</a>
 			</div>
 		</section>
-		<section class="projects">
-			<div class="divider">
-				Projects
-			</div>
-			<div class="buttons">
-				<a class="btn available" href="https://jonathangomz.github.io/mathematical-methods/">Truth table</a>
-				<a class="btn available" href="https://daily-quote.netlify.com/">Daily quote</a>
-				<a class="btn soon">Soon</a>
-			</div>
-		</section>
-		<footer class="icons-social">
-			<a target="_blank" href="https://github.com/jonathangomz"><i class="fab fa-github"></i></a>
-			<a target="_blank" href="https://twitter.com/jonathangomz"><i class="fab fa-twitter"></i></a>
-			<a target="_blank" href="https://stackoverflow.com/story/jonathangomz"><i
-				class="fab fa-stack-overflow"></i></a>
-			</footer>
-		</main>
+	</main>
+	<footer class="icons-social">
+		<a target="_blank" href="https://github.com/jonathangomz"><i class="fab fa-github-square"></i></a>
+		<a target="_blank" href="https://twitter.com/jonathangomz"><i class="fab fa-twitter-square"></i></a>
+		<a target="_blank" href="https://stackoverflow.com/story/jonathangomz"><i class="fab fa-stack-overflow"></i></a>
+	</footer>
 
-		<script src="https://kit.fontawesome.com/e0c9df4dfd.js" crossorigin="anonymous" SameSite="None"></script>
-		<script>
-		if(localStorage.getItem('theme') === "dark") {
+	<script src="https://kit.fontawesome.com/e0c9df4dfd.js" crossorigin="anonymous" SameSite="None"></script>
+	<script>
+		if (localStorage.getItem('theme') === 'dark') {
 			document.body.classList.toggle(localStorage.getItem('theme'));
+			configureMode();
 		}
-
-		window.onload = function(){
-			document.getElementById('change_mode')
-					.addEventListener('click', changeMode);
-		}
-
-		function changeMode() {
+		
+		function toogleMode() {
 			document.body.classList.toggle('dark');
 			localStorage.setItem('theme', document.body.classList);
+			configureMode();
+		}
+		
+		function configureMode() {
+			const removeBlink = (element) => element.className = 'blink';
+			const addBlink = (element) => element.className = 'blink do-blink';
+			
+			let blinkElements = document.getElementsByClassName('blink') ?? [];
+			
+			if (localStorage.getItem('theme') === 'dark') {
+				Array.from(blinkElements).forEach(addBlink);
+			} else {
+				Array.from(blinkElements).forEach(removeBlink);
+			}
+		}
+
+		window.onload = function () {
+			document.getElementById('change_mode')
+				.addEventListener('click', toogleMode);
 		}
 	</script>
 </body>
