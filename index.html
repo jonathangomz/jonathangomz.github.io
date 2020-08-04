@@ -87,9 +87,9 @@
 			let blinkElements = document.getElementsByClassName('blink') ?? [];
 			
 			if (localStorage.getItem('theme') === 'dark') {
-				Array.from(blinkElements).forEach(addBlink);
-			} else {
 				Array.from(blinkElements).forEach(removeBlink);
+			} else {
+				Array.from(blinkElements).forEach(addBlink);
 			}
 		}
 

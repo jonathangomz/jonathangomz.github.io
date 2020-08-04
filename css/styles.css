@@ -27,9 +27,9 @@ body {
 
 main, header {
 	display: grid;
-	place-items: center;
 	min-height: 100vh;
 	padding: 30px 0px;
+	place-items: center;
 }
 
 header {
@@ -93,9 +93,9 @@ hr {
 
 .card {
 	border: 1px solid var(--font-color);
+	color: var(--font-color);
 	padding: 12px;
 	text-decoration: none;
-	color: var(--card-font-color);
 
 	transition: .2s;
 	-webkit-transition: .2s;
@@ -111,15 +111,15 @@ hr {
 
 .btn {
 	background-color: var(--background-color);
-	border: 1px solid var(--card-font-color);
-	color: var(--card-font-color);
+	border: 1px solid var(--font-color);
+	color: var(--font-color);
 	cursor: pointer;
+	display: inline-block;
+	font-size: 0.9em;
 	margin: 10px;
 	text-decoration: none;
 	text-align: center;
 	padding: 10px 10px;
-	font-size: 0.9em;
-	display: inline-block;
 
 	transition: .3s;
 	-webkit-transition: .3s;
@@ -128,8 +128,8 @@ hr {
 }
 
 .btn:hover {
-	background-color: var(--card-font-color);
-	background-color: var(--card-font-color);
+	background-color: var(--font-color);
+	background-color: var(--font-color);
 	color: var(--background-color);
 }
 
@@ -165,17 +165,19 @@ hr {
 
 /* Footer section */
 footer {
-	text-align: center;
-	position: fixed;
-	left: 0px;
-	bottom: 0px;
-	height: auto;
-	width: 100%;
 	background-color: var(--background-color);
+	bottom: 0px;
+	display: flex;
+	height: auto;
+	justify-content: center;
+	margin: 0 12px;
+	position: fixed;
+	text-align: center;
+	width: 100%;
 }
 
-.icons-social i {
+.icons-social a{
 	color: var(--font-color);
-	font-size: 22px;
+	font-size: 28px;
 	padding: 10px;
 }
