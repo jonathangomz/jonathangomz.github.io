@@ -1,17 +1,17 @@
 :root {
-	--font-color: #f17300;
-	--background-color: #fafafa;
-	--card-font-color: #2A4494;
-	--mode-font-color-button: #9BC53D;
-	--mode-bg-color-button: 0, 0, 0;
-}
-
-.dark {
 	--font-color: #9BC53D;
 	--background-color: #000000;
 	--card-font-color: #0E7C7B;
 	--mode-font-color-button: #f17300;
 	--mode-bg-color-button: 250, 250, 250;
+}
+
+.dark {
+	--font-color: #f17300;
+	--background-color: #fafafa;
+	--card-font-color: #2A4494;
+	--mode-font-color-button: #9BC53D;
+	--mode-bg-color-button: 0, 0, 0;
 }
 
 /* Typography */
