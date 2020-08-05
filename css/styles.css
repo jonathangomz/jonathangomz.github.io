@@ -43,6 +43,10 @@ header sub {
 	text-align: center;
 }
 
+header .sections {
+	width: 100%;
+}
+
 span.do-blink {
 	animation: blink 1s linear infinite;
 }
@@ -78,7 +82,6 @@ section {
 
 .projects {
 	text-align: justify;
-	height: 100%;
 }
 
 hr {
@@ -134,16 +137,18 @@ hr {
 	color: var(--background-color);
 }
 
-.see-more {
-	background-color: var(--font-color);
-	color: var(--background-color);
+.section-option {
+	background-color: var(--background-color);
+	color: var(--font-color);
 	margin: 10px 0;
 	text-decoration: none;
 	text-align: left;
 	width: 100%;
+	padding: 5px;
+	margin: 5px 0;
 }
 
-.see-more:hover {
+.section-option:hover {
 	margin-right: -10px;
 }
 
