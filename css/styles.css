@@ -71,6 +71,10 @@ span.underline-blink {
 	}
 }
 
+.logo {
+	max-width: 100px;
+}
+
 section {
 	display: inherit;
 	height: 100vh;
