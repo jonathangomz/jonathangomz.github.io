@@ -90,16 +90,20 @@ section {
 
 hr {
 	border-color: var(--font-color);
+	width: 100%;
 }
 
 .cards {
 	display: grid;
 	grid-gap: 1rem;
-	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	margin-top: 50px;
 }
 
 .card {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 	border: 1px solid var(--font-color);
 	color: var(--font-color);
 	padding: 12px;
