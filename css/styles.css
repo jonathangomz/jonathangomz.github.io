@@ -1,6 +1,6 @@
 :root {
-	--font-color: #9BC53D;
-	--background-color: #000000;
+	--font-color: #9FD356;
+	--background-color: #00222E;
 	--card-font-color: #0E7C7B;
 	--mode-font-color-button: #f17300;
 	--mode-bg-color-button: 250, 250, 250;
@@ -10,7 +10,7 @@
 	--font-color: #f17300;
 	--background-color: #fafafa;
 	--card-font-color: #2A4494;
-	--mode-font-color-button: #9BC53D;
+	--mode-font-color-button: #9FD356;
 	--mode-bg-color-button: 0, 0, 0;
 }
 
@@ -37,6 +37,23 @@ header {
 	gap: 20px;
 	margin: 0 10px;
 	place-content: center;
+}
+
+header .logo {
+	height: 80px;
+	max-width: 100px;
+}
+
+header .sign {
+	color: #DE639A;
+}
+
+header .curly {
+	color: #DE639A;
+}
+
+header .fieldname, header .value {
+	color: #FA824C;
 }
 
 header sub {
@@ -71,10 +88,6 @@ span.underline-blink {
 	}
 }
 
-.logo {
-	max-width: 100px;
-}
-
 section {
 	display: inherit;
 	height: 100vh;
@@ -91,6 +104,14 @@ section {
 hr {
 	border-color: var(--font-color);
 	width: 100%;
+}
+
+section .section-title {
+	color: #DE639A;
+}
+
+section .section-details {
+	color: #59C3C3;
 }
 
 .cards {
@@ -115,8 +136,16 @@ hr {
 	-o-transition: .2s;
 }
 
+.card .card-title {
+	color: #FA824C;
+}
+
 .card-details {
 	margin-bottom: 10px;
+}
+
+.card .btn {
+	color: #DE639A;
 }
 
 /* css for the shiny buttons */
@@ -181,17 +210,18 @@ hr {
 footer {
 	background-color: var(--background-color);
 	bottom: 0px;
+	border-top: 1px solid #0E7C7B;
 	display: flex;
 	height: auto;
 	justify-content: center;
-	margin: 0 12px;
+	margin: 0;
 	position: fixed;
 	text-align: center;
 	width: 100%;
 }
 
 .icons-social a{
-	color: var(--font-color);
+	color: #0E7C7B;
 	font-size: 28px;
 	padding: 10px;
 }
