@@ -1,0 +1,37 @@
+---
+/**
+ * A slashed zero with a J inside — the zero's cross-line doubles as the J's
+ * stem. Redrawn from the Figma exports on a clean grid so the J's foot and the
+ * cross-line share a baseline.
+ */
+interface Props {
+	class?: string;
+	/** Square artboard for favicon-style contexts; tall matches the header. */
+	square?: boolean;
+}
+
+const { class: className, square = false } = Astro.props;
+---
+
+{
+	square ? (
+		<svg class={className} viewBox="0 0 194 194" fill="none" aria-hidden="true">
+			<g stroke="currentColor" stroke-width="12">
+				<rect x="6" y="6" width="182" height="182" />
+				<path d="M6 97 H56 V152 H138 V42 H56" />
+				<line x1="56" y1="42" x2="138" y2="152" />
+			</g>
+		</svg>
+	) : (
+		<svg class={className} viewBox="0 0 194 240" fill="none" aria-hidden="true">
+			<g stroke="currentColor" stroke-width="12">
+				<rect x="6" y="6" width="182" height="228" />
+				<path d="M6 120 H56 V184 H138 V58 H56" />
+				<line class="cross" x1="56" y1="58" x2="138" y2="184" />
+			</g>
+			<line class="pulse a" pathLength="100" x1="56" y1="58" x2="97" y2="121" />
+			<line class="pulse b" pathLength="100" x1="138" y1="184" x2="97" y2="121" />
+			<circle class="seam" cx="97" cy="121" r="14" />
+		</svg>
+	)
+}

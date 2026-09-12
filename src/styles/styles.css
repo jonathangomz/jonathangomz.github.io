@@ -1,22 +1,18 @@
 :root {
 	--font-color: #9FD356;
 	--background-color: #00222E;
-	--card-font-color: #0E7C7B;
-	--mode-font-color-button: #f17300;
-	--mode-bg-color-button: 250, 250, 250;
-}
-
-.dark {
-	--font-color: #f17300;
-	--background-color: #fafafa;
-	--card-font-color: #2A4494;
-	--mode-font-color-button: #9FD356;
-	--mode-bg-color-button: 0, 0, 0;
+	--surface: #06303d;
+	--rule: #0E7C7B;
+	--pink: #DE639A;
+	--orange: #FA824C;
+	--cyan: #59C3C3;
+	--dim: #6f9aa3;
 }
 
 /* Typography */
 
 html {
+	font-family: "Roboto Mono", monospace;
 	font-family: var(--font-jetbrains-mono), monospace;
 }
 
@@ -24,58 +20,98 @@ body {
 	background: var(--background-color);
 	color: var(--font-color);
 }
-/* Custom Styles */
 
-main, header {
+/* ═══ Layout shell ═══════════════════════════════════════════════════════════
+   The page is a running service: a header that boots and then docks into a
+   status bar, and below it the routes that service exposes. */
+
+.shell {
+	margin: 0 auto;
+	max-width: 760px;
+	padding: 0 16px 90px;
+}
+
+/* ═══ Header: boot, then dock ════════════════════════════════════════════════
+   `.dock` starts a full viewport tall with its contents centred, then collapses
+   to its natural height. Because the header is sticky, the collapsed state
+   becomes a status bar pinned to the top.
+
+   `.brand` is a wrapping flex row: while the command is 2em it wraps onto its
+   own line and reads as a centred splash; once it shrinks everything fits on
+   one line and reads as a status bar. The wrap does the layout change for free,
+   which avoids animating flex-direction. */
+
+.app-header {
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	background: var(--background-color);
+	border-bottom: 1px solid transparent;
+	animation: header-rule 0.01s linear 2.3s forwards;
+}
+
+@keyframes header-rule {
+	to { border-bottom-color: var(--rule); }
+}
+
+.dock {
 	display: grid;
-	min-height: 100vh;
-	padding: 30px 0px;
-	place-items: center;
-}
-
-header {
-	gap: 20px;
-	margin: 0 10px;
 	place-content: center;
+	justify-items: center;
+	gap: 14px;
+	min-height: 100vh;
+	padding: 16px 0;
+	animation: dock 0.6s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards;
 }
 
-header .logo {
-	height: 80px;
-	max-width: 100px;
+@keyframes dock {
+	to { min-height: 0; }
 }
 
-header .sign {
-	color: #DE639A;
+.splash {
+	display: grid;
+	justify-items: center;
+	gap: 12px;
+	width: 100%;
 }
 
-header .curly {
-	color: #DE639A;
+.brand {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 8px 12px;
+	width: 100%;
 }
 
-header .fieldname, header .value {
-	color: #FA824C;
+.brand .logo {
+	width: 62px;
+	height: 77px;
+	color: var(--font-color);
+	animation: logo-shrink 0.6s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards;
 }
 
-header sub {
-	text-align: center;
+@keyframes logo-shrink {
+	to { width: 20px; height: 25px; }
 }
 
-header h1 {
+.brand h1 {
 	font-size: clamp(1rem, 5.2vw, 2em);
+	white-space: nowrap;
+	animation: h1-shrink 0.6s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards;
 }
 
-/* ── Boot sequence ────────────────────────────────────────────────────────────
-   The header plays as a `dotnet run` that starts this site. Every element is
-   visible by default; the animations only add a staged entrance, so the header
-   is complete with animations disabled, with JS off, and to a crawler. */
+@keyframes h1-shrink {
+	to { font-size: 0.86rem; }
+}
 
-header .cmd {
+.brand .cmd {
 	display: inline-block;
 	overflow: hidden;
 	vertical-align: bottom;
 	white-space: nowrap;
 	/* 26 = characters in "$ dotnet run JonathanGomez" */
-	animation: type 0.9s steps(26) both;
+	animation: type 0.8s steps(26) both;
 }
 
 @keyframes type {
@@ -83,41 +119,47 @@ header .cmd {
 	to { width: 26ch; }
 }
 
-header .terminal {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 10px;
-	max-width: 100%;
+.brand .sign { color: var(--pink); }
+
+.brand .status {
+	color: var(--dim);
+	font-size: 0.78rem;
+	white-space: nowrap;
+	animation: boot-in 0.4s ease-out 2.0s both;
 }
 
-header .boot {
+.brand .status .dot { color: var(--font-color); }
+.brand .status .payload { font-size: inherit; }
+.brand .curly { color: var(--pink); }
+.brand .fieldname,
+.brand .value { color: var(--orange); }
+
+/* Boot output: present, then retracted once the app is up. */
+
+.boot {
 	display: flex;
 	flex-direction: column;
-	font-size: 0.78em;
-	line-height: 1.5;
+	overflow: hidden;
+	max-height: 10em;
+	width: 100%;
+	color: var(--cyan);
+	font-size: 0.76rem;
+	line-height: 1.55;
 	text-align: left;
 	white-space: pre;
-	max-width: 100%;
 	overflow-x: auto;
-	color: #59C3C3;
+	animation: boot-out 0.45s ease 1.7s forwards;
 }
 
-header .boot .info {
-	color: #0E7C7B;
-}
+.boot .info { color: var(--rule); }
 
-header .boot-line {
+.boot-line {
 	animation: boot-in 0.3s ease-out both;
-	animation-delay: calc(0.9s + var(--step) * 0.18s);
+	animation-delay: calc(0.85s + var(--step) * 0.14s);
 }
 
-header .payload {
-	animation: boot-in 0.4s ease-out 1.62s both;
-}
-
-header .sections {
-	animation: boot-in 0.4s ease-out 1.86s both;
+@keyframes boot-out {
+	to { opacity: 0; max-height: 0; }
 }
 
 @keyframes boot-in {
@@ -125,76 +167,195 @@ header .sections {
 	to { opacity: 1; transform: none; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-	header .cmd,
-	header .boot-line,
-	header .payload,
-	header .sections,
-	.underline-blink,
-	span.do-blink {
-		animation: none;
-	}
+/* ═══ Logo: the handshake, once ══════════════════════════════════════════════
+   Two pulses run the zero's cross-line and meet in the middle. It plays a
+   single time as part of the boot rather than looping, so the mark and the boot
+   read as one orchestrated moment instead of two competing animations. */
+
+.brand .logo .pulse {
+	fill: none;
+	stroke-width: 12;
+	stroke-dasharray: 16 100;
+	stroke-dashoffset: 16;
+	animation: meet 1.5s cubic-bezier(0.5, 0, 0.3, 1) 0.35s 1 both;
 }
 
-header .sections {
-	width: 100%;
+.brand .logo .pulse.a { stroke: var(--pink); }
+.brand .logo .pulse.b { stroke: var(--cyan); }
+
+@keyframes meet {
+	0%   { stroke-dashoffset: 16;   opacity: 1; }
+	62%  { stroke-dashoffset: -100; opacity: 1; }
+	78%  { stroke-dashoffset: -100; opacity: 1; }
+	100% { stroke-dashoffset: -100; opacity: 0; }
 }
 
-span.do-blink {
-	animation: blink 1s linear infinite;
+.brand .logo .seam {
+	fill: var(--orange);
+	opacity: 0;
+	transform-box: view-box;
+	transform-origin: 97px 121px;
+	animation: seam 1.5s ease-out 0.35s 1 both;
 }
 
-@keyframes blink {
-	from {
-		background-color: var(--font-color);
-	}
-	
-	to {
-		background-color: 0;
-	}
+@keyframes seam {
+	0%, 58% { opacity: 0; transform: scale(0.3); }
+	70%     { opacity: 1; transform: scale(1); }
+	100%    { opacity: 0; transform: scale(1.8); }
 }
 
-span.underline-blink {
-	animation: underline-blink 1s linear infinite;
+/* ═══ Routes ═════════════════════════════════════════════════════════════════
+   Native <details>, so every section is open-able with JavaScript off and a
+   crawler reads all of it. */
+
+.routes {
+	border: 1px solid var(--rule);
+	animation: boot-in 0.5s ease-out 2.0s both;
 }
 
-@keyframes underline-blink {
-	100% {
-		opacity: 0;
-	}
+.route {
+	border-bottom: 1px solid rgba(14, 124, 123, 0.4);
 }
 
-section {
-	display: inherit;
-	height: 100vh;
-	min-width: 10%;
-	padding: inherit;
-	place-content: center;
-	width: 60%;
+.route:last-child { border-bottom: 0; }
+
+.ep {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 10px;
+	padding: 12px 14px;
+	cursor: pointer;
+	list-style: none;
+	transition: background 0.15s;
 }
 
-.projects {
-	text-align: justify;
+.ep::-webkit-details-marker { display: none; }
+
+.ep:hover { background: var(--surface); }
+
+.ep:focus-visible {
+	outline: 2px solid var(--orange);
+	outline-offset: -2px;
 }
 
-hr {
-	border-color: var(--font-color);
-	width: 100%;
+.ep .verb {
+	color: var(--font-color);
+	font-weight: 700;
+	min-width: 3.2em;
 }
 
-section .section-title {
-	color: #DE639A;
+.ep .path { color: var(--pink); }
+.ep .note { color: var(--dim); font-size: 0.82rem; }
+
+.ep .chev {
+	margin-left: auto;
+	color: var(--dim);
+	font-size: 0.7rem;
+	transition: transform 0.15s;
 }
 
-section .section-details {
-	color: #59C3C3;
+.ep .chev::before { content: "\25B6"; }
+.route[open] > .ep .chev { transform: rotate(90deg); }
+
+.resp {
+	padding: 4px 14px 20px;
+	background: rgba(0, 0, 0, 0.14);
 }
+
+.meta {
+	margin-bottom: 12px;
+	color: var(--dim);
+	font-size: 0.72rem;
+}
+
+.meta .ok { color: var(--font-color); }
+.meta .ct { color: var(--orange); }
+
+/* ═══ Response bodies ════════════════════════════════════════════════════════
+   text/markdown renders as writing. Prose in a JSON string literal is prose
+   fighting its container, so only genuinely flat data is served as JSON. */
+
+.doc {
+	display: grid;
+	gap: 14px;
+	max-width: 68ch;
+}
+
+.doc p {
+	color: var(--cyan);
+	font-size: 0.86rem;
+	line-height: 1.75;
+}
+
+.doc blockquote {
+	margin: 0;
+	padding-left: 14px;
+	border-left: 2px solid var(--rule);
+	color: var(--font-color);
+	font-size: 0.86rem;
+	line-height: 1.7;
+}
+
+.doc .job + .job {
+	padding-top: 16px;
+	border-top: 1px solid rgba(14, 124, 123, 0.35);
+}
+
+.doc .job h3 {
+	color: var(--orange);
+	font-size: 0.92rem;
+	font-weight: 700;
+}
+
+.doc .job .period {
+	display: block;
+	margin-bottom: 8px;
+	color: var(--dim);
+	font-size: 0.76rem;
+}
+
+.doc ul {
+	display: grid;
+	gap: 6px;
+	margin: 0;
+	padding-left: 18px;
+	list-style: disc;
+}
+
+.doc li {
+	color: var(--cyan);
+	font-size: 0.84rem;
+	line-height: 1.6;
+}
+
+.doc li::marker { color: var(--rule); }
+
+.doc .edu {
+	color: var(--dim);
+	font-size: 0.8rem;
+}
+
+/* application/json */
+
+pre.json {
+	margin: 0;
+	overflow-x: auto;
+	color: var(--cyan);
+	font-size: 0.8rem;
+	line-height: 1.7;
+}
+
+pre.json .k { color: var(--pink); }
+pre.json .s { color: var(--orange); }
+pre.json .p { color: var(--dim); }
+
+/* ═══ Project cards (text/html) ══════════════════════════════════════════════ */
 
 .cards {
 	display: grid;
 	grid-gap: 1rem;
 	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	margin-top: 50px;
 }
 
 .card {
@@ -205,26 +366,22 @@ section .section-details {
 	color: var(--font-color);
 	padding: 12px;
 	text-decoration: none;
-
-	transition: .2s;
-	-webkit-transition: .2s;
-	-moz-transition: .2s;
-	-o-transition: .2s;
+	transition: 0.2s;
 }
 
-.card .card-title {
-	color: #FA824C;
+.card .card-title { color: var(--orange); }
+.card-details { margin-bottom: 10px; font-size: 0.84rem; line-height: 1.6; }
+.card .btn { color: var(--pink); }
+.card.soon { color: var(--dim); border-color: var(--rule); }
+
+hr {
+	border: 0;
+	border-top: 1px solid var(--rule);
+	width: 100%;
+	margin: 8px 0;
 }
 
-.card-details {
-	margin-bottom: 10px;
-}
-
-.card .btn {
-	color: #DE639A;
-}
-
-/* css for the shiny buttons */
+/* ═══ Buttons ════════════════════════════════════════════════════════════════ */
 
 .btn {
 	background-color: var(--background-color);
@@ -232,61 +389,32 @@ section .section-details {
 	color: var(--font-color);
 	cursor: pointer;
 	display: inline-block;
-	font-size: 0.9em;
-	margin: 10px;
-	text-decoration: none;
+	font-size: 0.82em;
 	text-align: center;
-	padding: 10px 10px;
-
-	transition: .3s;
-	-webkit-transition: .3s;
-	-moz-transition: .3s;
-	-o-transition: .3s;
+	padding: 8px 10px;
+	text-decoration: none;
+	transition: 0.3s;
 }
 
 .btn:hover {
 	background-color: var(--font-color);
-	background-color: var(--font-color);
 	color: var(--background-color);
 }
 
-.section-option {
-	background-color: var(--background-color);
-	color: var(--font-color);
-	margin: 10px 0;
-	text-decoration: none;
-	text-align: left;
-	width: 100%;
-	padding: 5px;
-	margin: 5px 0;
+/* ═══ Blink ══════════════════════════════════════════════════════════════════ */
+
+span.underline-blink { animation: underline-blink 1s linear infinite; }
+
+@keyframes underline-blink {
+	100% { opacity: 0; }
 }
 
-.section-option:hover {
-	margin-right: -10px;
-}
+/* ═══ Footer ═════════════════════════════════════════════════════════════════ */
 
-/* BUTTON DARK MODE */
-.change-mode {
-	background-color: rgba(var(--mode-bg-color-button), 0.1);
-	border: 2px rgb(var(--mode-bg-color-button)) solid;
-	border-radius: 5px;
-	color: var(--mode-font-color-button);
-	margin: 10px;
-	position: fixed;
-	right: 0px;
-	top: 0px;
-}
-
-.change-mode:hover {
-	background-color: var(--mode-font-color-button);
-	color: var(--background-color);
-}
-
-/* Footer section */
 footer {
 	background-color: var(--background-color);
-	bottom: 0px;
-	border-top: 1px solid #0E7C7B;
+	bottom: 0;
+	border-top: 1px solid var(--rule);
 	display: flex;
 	height: auto;
 	justify-content: center;
@@ -296,8 +424,60 @@ footer {
 	width: 100%;
 }
 
-.icons-social a{
-	color: #0E7C7B;
+.icons-social a {
+	color: var(--rule);
 	font-size: 28px;
 	padding: 10px;
+	transition: color 0.2s;
+}
+
+.icons-social a:hover { color: var(--font-color); }
+
+/* ═══ Warm start & reduced motion ════════════════════════════════════════════
+   A repeat visit within the session skips the boot the way a warm start skips
+   a cold start. `.warm` is set by an inline script before first paint. */
+
+.warm .dock,
+.warm .brand .logo,
+.warm .brand h1,
+.warm .brand .cmd,
+.warm .brand .status,
+.warm .boot,
+.warm .boot-line,
+.warm .routes,
+.warm .app-header,
+.warm .brand .logo .pulse,
+.warm .brand .logo .seam {
+	animation: none;
+}
+
+.warm .dock { min-height: 0; }
+.warm .brand .logo { width: 20px; height: 25px; }
+.warm .brand h1 { font-size: 0.86rem; }
+.warm .app-header { border-bottom-color: var(--rule); }
+.warm .boot { display: none; }
+.warm .brand .logo .pulse { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+	.dock,
+	.brand .logo,
+	.brand h1,
+	.brand .cmd,
+	.brand .status,
+	.boot,
+	.boot-line,
+	.routes,
+	.app-header,
+	.brand .logo .pulse,
+	.brand .logo .seam,
+	span.underline-blink {
+		animation: none;
+	}
+
+	.dock { min-height: 0; }
+	.brand .logo { width: 20px; height: 25px; }
+	.brand h1 { font-size: 0.86rem; }
+	.app-header { border-bottom-color: var(--rule); }
+	.boot { display: none; }
+	.brand .logo .pulse { opacity: 0; }
 }

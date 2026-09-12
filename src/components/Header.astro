@@ -1,28 +1,39 @@
 ---
+import Logo from './Logo.astro';
+
 interface Props {
 	name: string;
 }
 
 const { name } = Astro.props;
 
-// Boot sequence: the page presents itself as the app that `dotnet run` just
-// started. Purely CSS-driven — every line is in the markup and visible by
-// default, so the animation is decoration on top of a page that already works
-// without it (and is skipped entirely under prefers-reduced-motion).
+// The header boots as a `dotnet run`, then docks: the splash shrinks to a
+// status bar that sticks to the top while you read the routes below.
+//
+// Everything here is real markup, visible by default. The animation is an
+// entrance on top of a working header, so it survives JavaScript being off and
+// is skipped entirely under prefers-reduced-motion.
 ---
 
-<header>
-	<img class="logo" src="/logo.png" alt="logo" />
-	<div class="terminal">
-		<h1><span class="cmd"><span class="sign">$</span> dotnet run JonathanGomez</span><span class="underline-blink">_</span></h1>
-		<div class="boot">
-			<span class="boot-line" style="--step: 1">Building...</span>
-			<span class="boot-line" style="--step: 2"><span class="info">info</span>: Microsoft.Hosting.Lifetime[0]</span>
-			<span class="boot-line" style="--step: 3">      Application started.</span>
+<header class="app-header">
+	<div class="dock">
+		<div class="splash">
+			<div class="brand">
+				<Logo class="logo" />
+				<h1><span class="cmd"><span class="sign">$</span> dotnet run JonathanGomez</span><span
+						class="underline-blink">_</span></h1>
+				<p class="status">
+					<span class="dot" aria-hidden="true">●</span> running · <code class="payload"><span
+							class="curly">{'{'}</span> <span class="fieldname">"name"</span>: <span class="value"
+							>"{name}"</span> <span class="curly">{'}'}</span></code>
+				</p>
+			</div>
+			<div class="boot">
+				<span class="boot-line" style="--step: 1">Building...</span>
+				<span class="boot-line" style="--step: 2"><span class="info">info</span>: Microsoft.Hosting.Lifetime[0]</span>
+				<span class="boot-line" style="--step: 3">      Now listening on: https://jonathangomz.github.io</span>
+				<span class="boot-line" style="--step: 4">      Application started.</span>
+			</div>
 		</div>
-	</div>
-	<code class="payload"><span class="curly">{'{'}</span> <span class="fieldname">"name"</span>: <span class="value">"{name}"</span> <span class="curly">{'}'}</span></code>
-	<div class="sections">
-		<a class="btn section-option" href="#projects"><span class="sign">$</span> ls projects<span class="underline-blink">_</span></a>
 	</div>
 </header>

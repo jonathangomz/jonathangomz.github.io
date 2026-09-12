@@ -32,6 +32,19 @@ const {
 		<link rel="icon" href="/favicon.ico" type="image/png" />
 
 		<Font cssVariable="--font-jetbrains-mono" preload />
+
+		<script is:inline>
+			// Cold start once per session; warm starts skip straight to the
+			// docked header, the way a real app skips its startup cost.
+			try {
+				if (sessionStorage.getItem("booted")) {
+					document.documentElement.classList.add("warm");
+				}
+				sessionStorage.setItem("booted", "1");
+			} catch (e) {
+				/* private mode: just play the boot */
+			}
+		</script>
 	</head>
 
 	<body>

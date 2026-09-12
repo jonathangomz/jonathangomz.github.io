@@ -1,0 +1,35 @@
+---
+/**
+ * One endpoint of the "API". A native <details> so every route works with
+ * JavaScript off and a crawler reads the whole page; the response header line
+ * carries the content type, which is what makes the mixed body formats read as
+ * deliberate rather than inconsistent.
+ */
+interface Props {
+	method?: string;
+	path: string;
+	note: string;
+	/** Content type shown in the response header. */
+	type: 'text/markdown' | 'application/json' | 'text/html';
+	/** Plausible response time, purely cosmetic. */
+	ms: number;
+	open?: boolean;
+}
+
+const { method = 'GET', path, note, type, ms, open = false } = Astro.props;
+---
+
+<details class="route" open={open}>
+	<summary class="ep">
+		<span class="verb">{method}</span>
+		<span class="path">{path}</span>
+		<span class="note">{note}</span>
+		<span class="chev" aria-hidden="true"></span>
+	</summary>
+	<div class="resp">
+		<p class="meta">
+			<span class="ok">200 OK</span> · <span class="ct">{type}</span> · {ms}ms
+		</p>
+		<slot />
+	</div>
+</details>
