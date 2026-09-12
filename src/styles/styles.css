@@ -229,7 +229,14 @@ body {
 /* Out of flow on purpose: in flow it was a grid sibling of .brand, so .dock
    centred the pair and left the command line half the boot's height above the
    true centre. Absolute, the splash sizes to .brand alone and the command sits
-   dead centre, with the output hanging beneath it the way a terminal reads. */
+   dead centre, with the output hanging beneath it the way a terminal reads.
+
+   Overflow stays hidden on both axes. With overflow-x: auto the long "Now
+   listening on" line drew a horizontal scrollbar under the command while it was
+   still typing — .dock is a centred grid, so its column is only as wide as
+   .cmd, which starts at width 0. The bar showed before the output faded in, so
+   it read as a stray line under the text. The scrollbar was never usable
+   anyway: this element is pointer-events: none. */
 .boot {
 	position: absolute;
 	top: calc(100% + 12px);
@@ -245,7 +252,6 @@ body {
 	line-height: 1.55;
 	text-align: left;
 	white-space: pre;
-	overflow-x: auto;
 	animation: boot-out 0.3s ease 1.7s forwards;
 }
 
