@@ -1,12 +1,15 @@
 :root {
-	--font-color: #9FD356;
-	--background-color: #00222E;
-	--surface: #06303d;
-	--rule: #0E7C7B;
-	--pink: #DE639A;
-	--orange: #FA824C;
-	--cyan: #59C3C3;
-	--dim: #6f9aa3;
+	/* Panel 4: original accents kept at full saturation on a deeper ground.
+	   Darkening the ground raises every contrast ratio, so all text tokens sit
+	   well clear of WCAG AA. */
+	--font-color: #9FD356;      /* identity, GET, 200 OK */
+	--background-color: #001219;
+	--surface: #032028;
+	--rule: #0E7C7B;            /* borders only */
+	--pink: #DE639A;            /* paths, JSON keys */
+	--orange: #FA824C;          /* content types, headings */
+	--cyan: #59C3C3;            /* all prose */
+	--dim: #6f9aa3;             /* meta, notes */
 }
 
 /* Typography */
