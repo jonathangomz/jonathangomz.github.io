@@ -64,6 +64,78 @@ header h1 {
 	font-size: clamp(1rem, 5.2vw, 2em);
 }
 
+/* ── Boot sequence ────────────────────────────────────────────────────────────
+   The header plays as a `dotnet run` that starts this site. Every element is
+   visible by default; the animations only add a staged entrance, so the header
+   is complete with animations disabled, with JS off, and to a crawler. */
+
+header .cmd {
+	display: inline-block;
+	overflow: hidden;
+	vertical-align: bottom;
+	white-space: nowrap;
+	/* 26 = characters in "$ dotnet run JonathanGomez" */
+	animation: type 0.9s steps(26) both;
+}
+
+@keyframes type {
+	from { width: 0; }
+	to { width: 26ch; }
+}
+
+header .terminal {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
+	max-width: 100%;
+}
+
+header .boot {
+	display: flex;
+	flex-direction: column;
+	font-size: 0.78em;
+	line-height: 1.5;
+	text-align: left;
+	white-space: pre;
+	max-width: 100%;
+	overflow-x: auto;
+	color: #59C3C3;
+}
+
+header .boot .info {
+	color: #0E7C7B;
+}
+
+header .boot-line {
+	animation: boot-in 0.3s ease-out both;
+	animation-delay: calc(0.9s + var(--step) * 0.18s);
+}
+
+header .payload {
+	animation: boot-in 0.4s ease-out 1.62s both;
+}
+
+header .sections {
+	animation: boot-in 0.4s ease-out 1.86s both;
+}
+
+@keyframes boot-in {
+	from { opacity: 0; transform: translateY(-3px); }
+	to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	header .cmd,
+	header .boot-line,
+	header .payload,
+	header .sections,
+	.underline-blink,
+	span.do-blink {
+		animation: none;
+	}
+}
+
 header .sections {
 	width: 100%;
 }

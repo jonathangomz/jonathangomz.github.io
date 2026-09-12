@@ -4,12 +4,24 @@ interface Props {
 }
 
 const { name } = Astro.props;
+
+// Boot sequence: the page presents itself as the app that `dotnet run` just
+// started. Purely CSS-driven — every line is in the markup and visible by
+// default, so the animation is decoration on top of a page that already works
+// without it (and is skipped entirely under prefers-reduced-motion).
 ---
 
 <header>
 	<img class="logo" src="/logo.png" alt="logo" />
-	<h1><span class="sign">$</span> dotnet add package JonathanGomez<span class="underline-blink">_</span></h1>
-	<code><span class="curly">{'{'}</span> <span class="fieldname">"name"</span>: <span class="value">"{name}"</span> <span class="curly">{'}'}</span></code>
+	<div class="terminal">
+		<h1><span class="cmd"><span class="sign">$</span> dotnet run JonathanGomez</span><span class="underline-blink">_</span></h1>
+		<div class="boot">
+			<span class="boot-line" style="--step: 1">Building...</span>
+			<span class="boot-line" style="--step: 2"><span class="info">info</span>: Microsoft.Hosting.Lifetime[0]</span>
+			<span class="boot-line" style="--step: 3">      Application started.</span>
+		</div>
+	</div>
+	<code class="payload"><span class="curly">{'{'}</span> <span class="fieldname">"name"</span>: <span class="value">"{name}"</span> <span class="curly">{'}'}</span></code>
 	<div class="sections">
 		<a class="btn section-option" href="#projects"><span class="sign">$</span> ls projects<span class="underline-blink">_</span></a>
 	</div>
