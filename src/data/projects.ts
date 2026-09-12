@@ -10,6 +10,14 @@ export interface Project {
 
 export const projects: Project[] = [
 	{
+		title: 'notion_api',
+		details:
+			'A Dart client wrapping the Notion public API, published to pub.dev across 14 releases.',
+		href: 'https://pub.dev/packages/notion_api',
+		hrefLabel: 'Go to pub.dev',
+		repo: 'https://github.com/jonathangomz/notion_api',
+	},
+	{
 		title: 'UMMobile app',
 		details:
 			"Montemorelos University's open source mobile app, built with Flutter after migrating it from Angular.",
