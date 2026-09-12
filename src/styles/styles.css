@@ -1,15 +1,55 @@
-:root {
-	/* Panel 4: original accents kept at full saturation on a deeper ground.
-	   Darkening the ground raises every contrast ratio, so all text tokens sit
-	   well clear of WCAG AA. */
-	--font-color: #9FD356;      /* identity, GET, 200 OK */
+:root, :root[data-theme="terminal"] {
+	/* Default. Every token clears WCAG AA on its own ground; --rule is
+	   borders only and clears the 3:1 bar for non-text. */
 	--background-color: #001219;
 	--surface: #032028;
-	--rule: #0E7C7B;            /* borders only */
-	--pink: #DE639A;            /* paths, JSON keys */
-	--orange: #FA824C;          /* content types, headings */
-	--cyan: #59C3C3;            /* all prose */
-	--dim: #6f9aa3;             /* meta, notes */
+	--rule: #0E7C7B;
+	--font-color: #9FD356;
+	--pink: #DE639A;
+	--orange: #FA824C;
+	--cyan: #59C3C3;
+	--dim: #6f9aa3;
+}
+
+:root[data-theme="darcula"] {
+	/* JetBrains Darcula, the Rider and DataGrip default. Its orange and
+	   border grey were lightened slightly: IDE chrome is tuned for an editor,
+	   not for 4.5:1 on a web page. */
+	--background-color: #2B2B2B;
+	--surface: #323232;
+	--rule: #6F7578;
+	--font-color: #A5C261;
+	--pink: #B08CC4;
+	--orange: #CF7E3A;
+	--cyan: #A9B7C6;
+	--dim: #9198A0;
+}
+
+:root[data-theme="nord"] {
+	/* Nord. Its muted purple and border needed the same small lift. */
+	--background-color: #2E3440;
+	--surface: #3B4252;
+	--rule: #6E7D98;
+	--font-color: #A3BE8C;
+	--pink: #B690AF;
+	--orange: #EBCB8B;
+	--cyan: #D8DEE9;
+	--dim: #9AA8BC;
+}
+
+:root[data-theme="light"] {
+	/* For reading in daylight. Not applied automatically from
+	   prefers-color-scheme: the site is a terminal, so dark is the deliberate
+	   default and light is an explicit choice that is then remembered. */
+	--background-color: #F7F9FA;
+	--surface: #ECF0F3;
+	--rule: #87919C;
+	--font-color: #3F6E12;
+	--pink: #9C3A6B;
+	--orange: #9A4C18;
+	--cyan: #24303A;
+	--dim: #5E6B75;
+	--resp-tint: 5%;
 }
 
 /* Typography */
@@ -122,6 +162,57 @@ body {
 
 .brand .status .dot { color: var(--font-color); }
 
+/* Theme picker. Shown only when the inline script has run, so JavaScript-less
+   visitors never get a control that does nothing. A native <select> carries its
+   own keyboard and screen-reader behaviour. */
+
+.theme-picker { display: none; }
+
+[data-js] .theme-picker {
+	display: inline-flex;
+	align-items: center;
+	animation: boot-in 0.4s ease-out 2.1s both;
+}
+
+.theme-picker select {
+	appearance: none;
+	border: 1px solid color-mix(in srgb, var(--rule) 60%, transparent);
+	background: transparent;
+	color: var(--dim);
+	font: inherit;
+	font-size: 0.78rem;
+	padding: 1px 7px;
+	cursor: pointer;
+	transition: color 0.15s, border-color 0.15s;
+}
+
+.theme-picker select:hover {
+	color: var(--font-color);
+	border-color: var(--font-color);
+}
+
+.theme-picker select:focus-visible {
+	outline: 2px solid var(--orange);
+	outline-offset: 1px;
+}
+
+/* The menu itself is drawn by the OS, so it needs real colours, not transparent. */
+.theme-picker option {
+	background: var(--background-color);
+	color: var(--font-color);
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
 /* Boot output: present, then retracted once the app is up. */
 
 .boot {
@@ -165,7 +256,7 @@ body {
 }
 
 .route {
-	border-bottom: 1px solid rgba(14, 124, 123, 0.4);
+	border-bottom: 1px solid color-mix(in srgb, var(--rule) 40%, transparent);
 }
 
 .route:last-child { border-bottom: 0; }
@@ -211,7 +302,7 @@ body {
 
 .resp {
 	padding: 4px 14px 20px;
-	background: rgba(0, 0, 0, 0.14);
+	background: color-mix(in srgb, var(--background-color) 100%, black var(--resp-tint, 14%));
 }
 
 .meta {
@@ -250,7 +341,7 @@ body {
 
 .doc .job + .job {
 	padding-top: 16px;
-	border-top: 1px solid rgba(14, 124, 123, 0.35);
+	border-top: 1px solid color-mix(in srgb, var(--rule) 35%, transparent);
 }
 
 .doc .job h3 {
@@ -392,6 +483,7 @@ footer {
 .warm .brand h1,
 .warm .brand .cmd,
 .warm .brand .status,
+.warm .theme-picker,
 .warm .boot,
 .warm .boot-line,
 .warm .routes,
@@ -409,6 +501,7 @@ footer {
 	.brand h1,
 	.brand .cmd,
 	.brand .status,
+	.theme-picker,
 	.boot,
 	.boot-line,
 	.routes,
