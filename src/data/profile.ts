@@ -90,5 +90,3 @@ export const contact: ContactLink[] = [
 		icon: 'instagram',
 	},
 ];
-
-export const education = 'Computer Systems Engineering, Montemorelos University (Mexico)';

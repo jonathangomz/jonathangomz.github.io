@@ -465,11 +465,6 @@ body {
 
 .doc li::marker { color: var(--rule); }
 
-.doc .edu {
-	color: var(--dim);
-	font-size: 0.8rem;
-}
-
 /* application/json */
 
 pre.json {
