@@ -510,6 +510,11 @@ pre.json .p { color: var(--dim); }
 .card-actions {
 	display: flex;
 	flex-wrap: wrap;
+	/* Hold the buttons at their own height and sit them at the bottom of the
+	   band, so a card with no page link keeps its repository button the same
+	   size as everyone else's and leaves the gap where the link would be.
+	   The default `stretch` would grow a lone button to fill the whole band. */
+	align-content: flex-end;
 	gap: 8px;
 	margin-top: auto;
 }
