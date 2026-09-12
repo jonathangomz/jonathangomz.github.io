@@ -132,7 +132,12 @@ body {
 .brand {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
+	/* Baseline, not centre. The name and the status text are different sizes, so
+	   centring their boxes left the baselines half a pixel apart and the name
+	   reading low. Sitting them on a shared baseline is what makes mixed sizes
+	   look aligned — matching their ink centres instead would over-correct,
+	   since "running" has a descender and the name has none. */
+	align-items: baseline;
 	justify-content: center;
 	gap: 8px 12px;
 	width: 100%;
