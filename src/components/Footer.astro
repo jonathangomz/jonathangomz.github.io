@@ -1,8 +1,14 @@
+---
+import SocialIcon from './SocialIcon.astro';
+---
+
 <footer class="icons-social">
-	<a target="_blank" href="https://github.com/jonathangomz" rel="noreferrer">
-		<i class="fab fa-github-square"></i>
+	<a target="_blank" href="https://github.com/jonathangomz" rel="noreferrer" aria-label="GitHub">
+		<SocialIcon name="github" />
 	</a>
-	<a target="_blank" href="https://instagram.com/jonathan_gomz" rel="noreferrer">
-		<i class="fab fa-instagram-square"></i>
-	</a>
+	<a
+		target="_blank"
+		href="https://instagram.com/jonathan_gomz"
+		rel="noreferrer"
+		aria-label="Instagram"><SocialIcon name="instagram" /></a>
 </footer>
