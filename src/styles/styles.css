@@ -89,12 +89,23 @@ body {
 	top: 0;
 	z-index: 20;
 	background: var(--background-color);
-	border-bottom: 1px solid transparent;
-	animation: header-rule 0.01s linear 2.3s forwards;
 }
 
-@keyframes header-rule {
-	to { border-bottom-color: var(--rule); }
+.app-header::after {
+	content: "";
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	height: 1px;
+	background: var(--rule);
+	transform: scaleX(0);
+	transform-origin: center;
+	animation: rule-draw 0.5s cubic-bezier(0.33, 0, 0.2, 1) 2.1s forwards;
+}
+
+@keyframes rule-draw {
+	to { transform: scaleX(1); }
 }
 
 .dock {
@@ -451,9 +462,15 @@ span.underline-blink { animation: underline-blink 1s linear infinite; }
 	100% { opacity: 0; }
 }
 
+@keyframes footer-up {
+	from { transform: translateY(100%); }
+	to { transform: translateY(0); }
+}
+
 /* ═══ Footer ═════════════════════════════════════════════════════════════════ */
 
 footer {
+	animation: footer-up 0.45s cubic-bezier(0.25, 0.9, 0.3, 1) 2.35s both;
 	background-color: var(--background-color);
 	bottom: 0;
 	border-top: 1px solid var(--rule);
@@ -487,13 +504,17 @@ footer {
 .warm .boot,
 .warm .boot-line,
 .warm .routes,
-.warm .app-header {
+.warm .app-header,
+.warm .app-header::after,
+.warm footer {
 	animation: none;
 }
 
+.warm .app-header::after { transform: scaleX(1); }
+.warm footer { transform: none; }
+
 .warm .dock { min-height: 0; }
 .warm .brand h1 { font-size: 0.86rem; }
-.warm .app-header { border-bottom-color: var(--rule); }
 .warm .boot { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -506,12 +527,16 @@ footer {
 	.boot-line,
 	.routes,
 	.app-header,
+	.app-header::after,
+	footer,
 	span.underline-blink {
 		animation: none;
 	}
 
+	.app-header::after { transform: scaleX(1); }
+	footer { transform: none; }
+
 	.dock { min-height: 0; }
 	.brand h1 { font-size: 0.86rem; }
-	.app-header { border-bottom-color: var(--rule); }
 	.boot { display: none; }
 }
