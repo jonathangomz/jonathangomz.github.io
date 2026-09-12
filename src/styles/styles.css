@@ -123,9 +123,9 @@ body {
 }
 
 .splash {
+	position: relative;
 	display: grid;
 	justify-items: center;
-	gap: 12px;
 	width: 100%;
 }
 
@@ -226,19 +226,27 @@ body {
 
 /* Boot output: present, then retracted once the app is up. */
 
+/* Out of flow on purpose: in flow it was a grid sibling of .brand, so .dock
+   centred the pair and left the command line half the boot's height above the
+   true centre. Absolute, the splash sizes to .brand alone and the command sits
+   dead centre, with the output hanging beneath it the way a terminal reads. */
 .boot {
+	position: absolute;
+	top: calc(100% + 12px);
+	right: 0;
+	left: 0;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	pointer-events: none;
 	max-height: 10em;
-	width: 100%;
 	color: var(--cyan);
 	font-size: 0.76rem;
 	line-height: 1.55;
 	text-align: left;
 	white-space: pre;
 	overflow-x: auto;
-	animation: boot-out 0.45s ease 1.7s forwards;
+	animation: boot-out 0.3s ease 1.7s forwards;
 }
 
 .boot .info { color: var(--rule); }
