@@ -1,14 +1,16 @@
 ---
 import SocialIcon from './SocialIcon.astro';
+import { contact } from '../data/profile';
+
+// Renders from the same list as GET /contact, so the links cannot drift.
 ---
 
 <footer class="icons-social">
-	<a target="_blank" href="https://github.com/jonathangomz" rel="noreferrer" aria-label="GitHub">
-		<SocialIcon name="github" />
-	</a>
-	<a
-		target="_blank"
-		href="https://instagram.com/jonathan_gomz"
-		rel="noreferrer"
-		aria-label="Instagram"><SocialIcon name="instagram" /></a>
+	{
+		contact.map((link) => (
+			<a target="_blank" href={link.href} rel="noreferrer" aria-label={link.key}>
+				<SocialIcon name={link.icon} />
+			</a>
+		))
+	}
 </footer>

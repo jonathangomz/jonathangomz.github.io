@@ -61,10 +61,34 @@ export const stack: Record<string, string[]> = {
 	ops: ['Azure DevOps', 'GitHub Actions', 'Nginx', 'IIS'],
 };
 
-/** GET /contact — a small flat object. Also JSON-shaped. */
-export const contact: Record<string, string> = {
-	github: 'github.com/jonathangomz',
-	instagram: 'instagram.com/jonathan_gomz',
-};
+export interface ContactLink {
+	/** JSON key, and the footer's accessible name. */
+	key: string;
+	/** What the JSON value reads as — the URL without its scheme. */
+	display: string;
+	href: string;
+	icon: 'github' | 'instagram';
+}
+
+/**
+ * GET /contact — a small flat object, so it is served as JSON.
+ *
+ * The footer renders from this same list, so the two places these links appear
+ * cannot drift apart: adding one here adds it to both.
+ */
+export const contact: ContactLink[] = [
+	{
+		key: 'github',
+		display: 'github.com/jonathangomz',
+		href: 'https://github.com/jonathangomz',
+		icon: 'github',
+	},
+	{
+		key: 'instagram',
+		display: 'instagram.com/jonathan_gomz',
+		href: 'https://instagram.com/jonathan_gomz',
+		icon: 'instagram',
+	},
+];
 
 export const education = 'Computer Systems Engineering, Montemorelos University (Mexico)';

@@ -1,0 +1,39 @@
+---
+import type { ContactLink } from '../data/profile';
+
+/**
+ * The /contact response. Shaped as JSON like /stack, because a handful of
+ * key–value pairs genuinely is JSON-shaped — but the values are URLs, so they
+ * are real anchors rather than text you have to retype. API explorers render
+ * JSON links the same way.
+ *
+ * Assembled here rather than in the template: inside a <pre> the template's own
+ * indentation becomes significant whitespace and puts every token on its own
+ * line.
+ */
+interface Props {
+	links: ContactLink[];
+}
+
+const { links } = Astro.props;
+
+const escape = (value: string) =>
+	value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const punct = (value: string) => `<span class="p">${value}</span>`;
+const width = Math.max(...links.map((link) => link.key.length));
+
+const rows = links.map((link, index) => {
+	const gap = ' '.repeat(width - link.key.length + 1);
+	const anchor =
+		`<a class="s" href="${escape(link.href)}" target="_blank" rel="noreferrer">` +
+		`"${escape(link.display)}"</a>`;
+	const comma = index < links.length - 1 ? punct(',') : '';
+
+	return `  <span class="k">"${escape(link.key)}"</span>${punct(':')}${gap}${anchor}${comma}`;
+});
+
+const json = [punct('{'), ...rows, punct('}')].join('\n');
+---
+
+<pre class="json" set:html={json}></pre>

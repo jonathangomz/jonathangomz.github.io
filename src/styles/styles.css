@@ -234,10 +234,22 @@ body {
 
 .theme-picker { display: none; }
 
+/* What the app is and how it is doing belong together; the theme menu is a
+   control, not information about the app, so it sits at the opposite edge, the
+   way an IDE separates its status bar from its settings. Anchored to the header
+   rather than the splash: .dock is a centred grid, so anything inside it is
+   only as wide as the command and could never reach the edge.
+
+   It appears after the dock has finished at 2.3s, so it fades in at its final
+   position instead of riding the collapsing header up. */
 [data-js] .theme-picker {
+	position: absolute;
+	top: 50%;
+	right: 16px;
 	display: inline-flex;
 	align-items: center;
-	animation: boot-in 0.4s ease-out 2.1s both;
+	transform: translateY(-50%);
+	animation: boot-in 0.4s ease-out 2.35s both;
 }
 
 .theme-picker select {
@@ -617,4 +629,21 @@ footer {
 	.brand .prefix { width: 0; }
 	.brand .underline-blink { opacity: 0; }
 	.boot { display: none; }
+}
+
+/* Below this the reserved command width plus the menu no longer fit on one
+   line, so the bar stacks and stays centred instead of overflowing. */
+@media (max-width: 600px) {
+	/* The centred identity and an edge-anchored control would collide, so the
+	   menu returns to the flow and wraps under the bar. */
+	[data-js] .theme-picker {
+		position: static;
+		/* display: flex, not inline-flex — auto margins only centre a
+		   block-level box. */
+		display: flex;
+		width: fit-content;
+		margin: 0 auto;
+		padding-bottom: 4px;
+		transform: none;
+	}
 }

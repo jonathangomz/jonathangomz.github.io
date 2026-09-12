@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Route from '../components/Route.astro';
 import JsonBlock from '../components/JsonBlock.astro';
+import ContactBlock from '../components/ContactBlock.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Footer from '../components/Footer.astro';
 
@@ -54,8 +55,8 @@ import { about, experience, stack, contact, education } from '../data/profile';
 				</div>
 			</Route>
 
-			<Route path="/contact" note="links" type="application/json" ms={2}>
-				<JsonBlock data={contact} />
+			<Route path="/contact" note={`${contact.length} links`} type="application/json" ms={2}>
+				<ContactBlock links={contact} />
 			</Route>
 		</div>
 	</main>
