@@ -503,6 +503,24 @@ pre.json .p { color: var(--dim); }
 .card .btn { color: var(--pink); }
 .card.soon { color: var(--dim); border-color: var(--rule); }
 
+.card-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+/* Each button takes an equal share of the row, and drops to its own full-width
+   row when the card is too narrow to hold both. */
+.card-actions .btn { flex: 1 1 7rem; }
+
+.card .btn-repo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	color: var(--cyan);
+}
+
 hr {
 	border: 0;
 	border-top: 1px solid var(--rule);

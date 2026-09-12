@@ -1,14 +1,20 @@
 ---
 import type { Project } from '../data/projects';
+import SocialIcon from './SocialIcon.astro';
 
 type Props = Project;
 
-const { title, details, href } = Astro.props;
+const { title, details, href, hrefLabel = 'Go to the page', repo } = Astro.props;
 ---
 
 <div class="card">
 	<span class="card-title">{title}</span>
 	<hr />
 	<p class="card-details">{details}</p>
-	<a class="btn" target="_blank" href={href} rel="noreferrer">Go to the page</a>
+	<div class="card-actions">
+		{href && <a class="btn" target="_blank" href={href} rel="noreferrer">{hrefLabel}</a>}
+		<a class="btn btn-repo" target="_blank" href={repo} rel="noreferrer">
+			<SocialIcon name="github" />Repository
+		</a>
+	</div>
 </div>
