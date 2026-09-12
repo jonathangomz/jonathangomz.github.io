@@ -138,14 +138,28 @@ body {
 	width: 100%;
 }
 
+/* Width is reserved up front (26 characters of command + 1 for the cursor) so
+   the prompt keeps a fixed left edge and the text fills rightward, the way a
+   terminal behaves. Sizing to the growing text instead made the whole line
+   spread outward from its middle. ch units scale with font-size, so the same
+   reservation holds while the heading shrinks. */
 .brand h1 {
+	width: 27ch;
 	font-size: clamp(1rem, 5.2vw, 2em);
+	text-align: left;
 	white-space: nowrap;
-	animation: h1-shrink 0.6s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards;
+	animation:
+		h1-shrink 0.6s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards,
+		h1-narrow 0.45s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards;
 }
 
 @keyframes h1-shrink {
 	to { font-size: 0.86rem; }
+}
+
+/* Docked, only the app name is left, so the reservation narrows to match. */
+@keyframes h1-narrow {
+	to { width: 13ch; }
 }
 
 .brand .cmd {
@@ -154,12 +168,43 @@ body {
 	vertical-align: bottom;
 	white-space: nowrap;
 	/* 26 = characters in "$ dotnet run JonathanGomez" */
-	animation: type 0.8s steps(26) both;
+	animation:
+		type 0.8s steps(26) both,
+		cmd-narrow 0.45s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards;
 }
 
 @keyframes type {
 	from { width: 0; }
 	to { width: 26ch; }
+}
+
+@keyframes cmd-narrow {
+	to { width: 13ch; }
+}
+
+/* The prompt itself retracts on docking, leaving the app name behind. 13ch
+   holds "$ dotnet run" plus its trailing space. */
+.brand .prefix {
+	display: inline-block;
+	overflow: hidden;
+	width: 13ch;
+	white-space: nowrap;
+	animation: prefix-out 0.45s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards;
+}
+
+@keyframes prefix-out {
+	to { width: 0; }
+}
+
+/* A running app has no prompt cursor. */
+.brand .underline-blink {
+	animation:
+		underline-blink 1s linear infinite,
+		cursor-out 0.25s ease 1.7s forwards;
+}
+
+@keyframes cursor-out {
+	to { opacity: 0; }
 }
 
 .brand .sign { color: var(--pink); }
@@ -513,6 +558,8 @@ footer {
 .warm .dock,
 .warm .brand h1,
 .warm .brand .cmd,
+.warm .brand .prefix,
+.warm .brand .underline-blink,
 .warm .brand .status,
 .warm .theme-picker,
 .warm .boot,
@@ -528,13 +575,17 @@ footer {
 .warm footer { transform: none; }
 
 .warm .dock { min-height: 0; }
-.warm .brand h1 { font-size: 0.86rem; }
+.warm .brand h1 { font-size: 0.86rem; width: 13ch; }
+.warm .brand .cmd { width: 13ch; }
+.warm .brand .prefix { width: 0; }
+.warm .brand .underline-blink { opacity: 0; }
 .warm .boot { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
 	.dock,
 	.brand h1,
 	.brand .cmd,
+	.brand .prefix,
 	.brand .status,
 	.theme-picker,
 	.boot,
@@ -551,6 +602,9 @@ footer {
 	footer { transform: none; }
 
 	.dock { min-height: 0; }
-	.brand h1 { font-size: 0.86rem; }
+	.brand h1 { font-size: 0.86rem; width: 13ch; }
+	.brand .cmd { width: 13ch; }
+	.brand .prefix { width: 0; }
+	.brand .underline-blink { opacity: 0; }
 	.boot { display: none; }
 }
