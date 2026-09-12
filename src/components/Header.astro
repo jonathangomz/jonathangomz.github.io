@@ -1,14 +1,6 @@
 ---
-import Logo from './Logo.astro';
-
-interface Props {
-	name: string;
-}
-
-const { name } = Astro.props;
-
-// The header boots as a `dotnet run`, then docks: the splash shrinks to a
-// status bar that sticks to the top while you read the routes below.
+// The header boots as a `dotnet run`, then docks: the command shrinks and the
+// header — already sticky — becomes a status bar that stays while you read.
 //
 // Everything here is real markup, visible by default. The animation is an
 // entrance on top of a working header, so it survives JavaScript being off and
@@ -19,14 +11,9 @@ const { name } = Astro.props;
 	<div class="dock">
 		<div class="splash">
 			<div class="brand">
-				<Logo class="logo" />
 				<h1><span class="cmd"><span class="sign">$</span> dotnet run JonathanGomez</span><span
 						class="underline-blink">_</span></h1>
-				<p class="status">
-					<span class="dot" aria-hidden="true">●</span> running · <code class="payload"><span
-							class="curly">{'{'}</span> <span class="fieldname">"name"</span>: <span class="value"
-							>"{name}"</span> <span class="curly">{'}'}</span></code>
-				</p>
+				<p class="status"><span class="dot" aria-hidden="true">●</span> running</p>
 			</div>
 			<div class="boot">
 				<span class="boot-line" style="--step: 1">Building...</span>

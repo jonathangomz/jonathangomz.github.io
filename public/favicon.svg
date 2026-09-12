@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 194 194">
+  <!--
+    A slashed zero with a J inside: the zero's cross-line doubles as the J's
+    stem. Square artboard so the browser tab does not letterbox it.
+    Stroke uses the site green (#9FD356), which reads on light and dark tab bars.
+  -->
+  <g fill="none" stroke="#9FD356" stroke-width="12">
+    <rect x="6" y="6" width="182" height="182"/>
+    <path d="M6 97 H56 V152 H138 V42 H56"/>
+    <line x1="56" y1="42" x2="138" y2="152"/>
+  </g>
+</svg>

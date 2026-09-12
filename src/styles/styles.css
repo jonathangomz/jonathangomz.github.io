@@ -84,17 +84,6 @@ body {
 	width: 100%;
 }
 
-.brand .logo {
-	width: 62px;
-	height: 77px;
-	color: var(--font-color);
-	animation: logo-shrink 0.6s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards;
-}
-
-@keyframes logo-shrink {
-	to { width: 20px; height: 25px; }
-}
-
 .brand h1 {
 	font-size: clamp(1rem, 5.2vw, 2em);
 	white-space: nowrap;
@@ -129,10 +118,6 @@ body {
 }
 
 .brand .status .dot { color: var(--font-color); }
-.brand .status .payload { font-size: inherit; }
-.brand .curly { color: var(--pink); }
-.brand .fieldname,
-.brand .value { color: var(--orange); }
 
 /* Boot output: present, then retracted once the app is up. */
 
@@ -165,43 +150,6 @@ body {
 @keyframes boot-in {
 	from { opacity: 0; transform: translateY(-3px); }
 	to { opacity: 1; transform: none; }
-}
-
-/* ═══ Logo: the handshake, once ══════════════════════════════════════════════
-   Two pulses run the zero's cross-line and meet in the middle. It plays a
-   single time as part of the boot rather than looping, so the mark and the boot
-   read as one orchestrated moment instead of two competing animations. */
-
-.brand .logo .pulse {
-	fill: none;
-	stroke-width: 12;
-	stroke-dasharray: 16 100;
-	stroke-dashoffset: 16;
-	animation: meet 1.5s cubic-bezier(0.5, 0, 0.3, 1) 0.35s 1 both;
-}
-
-.brand .logo .pulse.a { stroke: var(--pink); }
-.brand .logo .pulse.b { stroke: var(--cyan); }
-
-@keyframes meet {
-	0%   { stroke-dashoffset: 16;   opacity: 1; }
-	62%  { stroke-dashoffset: -100; opacity: 1; }
-	78%  { stroke-dashoffset: -100; opacity: 1; }
-	100% { stroke-dashoffset: -100; opacity: 0; }
-}
-
-.brand .logo .seam {
-	fill: var(--orange);
-	opacity: 0;
-	transform-box: view-box;
-	transform-origin: 97px 121px;
-	animation: seam 1.5s ease-out 0.35s 1 both;
-}
-
-@keyframes seam {
-	0%, 58% { opacity: 0; transform: scale(0.3); }
-	70%     { opacity: 1; transform: scale(1); }
-	100%    { opacity: 0; transform: scale(1.8); }
 }
 
 /* ═══ Routes ═════════════════════════════════════════════════════════════════
@@ -438,29 +386,23 @@ footer {
    a cold start. `.warm` is set by an inline script before first paint. */
 
 .warm .dock,
-.warm .brand .logo,
 .warm .brand h1,
 .warm .brand .cmd,
 .warm .brand .status,
 .warm .boot,
 .warm .boot-line,
 .warm .routes,
-.warm .app-header,
-.warm .brand .logo .pulse,
-.warm .brand .logo .seam {
+.warm .app-header {
 	animation: none;
 }
 
 .warm .dock { min-height: 0; }
-.warm .brand .logo { width: 20px; height: 25px; }
 .warm .brand h1 { font-size: 0.86rem; }
 .warm .app-header { border-bottom-color: var(--rule); }
 .warm .boot { display: none; }
-.warm .brand .logo .pulse { opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
 	.dock,
-	.brand .logo,
 	.brand h1,
 	.brand .cmd,
 	.brand .status,
@@ -468,16 +410,12 @@ footer {
 	.boot-line,
 	.routes,
 	.app-header,
-	.brand .logo .pulse,
-	.brand .logo .seam,
 	span.underline-blink {
 		animation: none;
 	}
 
 	.dock { min-height: 0; }
-	.brand .logo { width: 20px; height: 25px; }
 	.brand h1 { font-size: 0.86rem; }
 	.app-header { border-bottom-color: var(--rule); }
 	.boot { display: none; }
-	.brand .logo .pulse { opacity: 0; }
 }
