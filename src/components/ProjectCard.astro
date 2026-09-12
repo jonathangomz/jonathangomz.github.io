@@ -1,0 +1,14 @@
+---
+import type { Project } from '../data/projects';
+
+type Props = Project;
+
+const { title, details, href } = Astro.props;
+---
+
+<div class="card">
+	<span class="card-title">{title}</span>
+	<hr />
+	<p class="card-details">{details}</p>
+	<a class="btn" target="_blank" href={href} rel="noreferrer">Go to the page</a>
+</div>

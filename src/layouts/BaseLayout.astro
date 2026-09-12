@@ -1,0 +1,49 @@
+---
+import Analytics from '../components/Analytics.astro';
+
+import '../styles/reset.css';
+import '../styles/styles.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = 'Jonathan Gómez | Dev',
+	description = 'Author: J.C. Gómez, Year: 2020',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<Analytics measurementId="G-3RHCNLFFDN" />
+
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>{title}</title>
+
+		<link rel="icon" href="/favicon.ico" type="image/png" />
+
+		<link
+			href="https://fonts.googleapis.com/css2?family=Nunito:wght@200&display=swap"
+			rel="stylesheet"
+		/>
+		<link href="https://fonts.googleapis.com/css?family=Reem+Kufi|Roboto:300" rel="stylesheet" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono" />
+	</head>
+
+	<body>
+		<slot />
+
+		<script
+			is:inline
+			src="https://kit.fontawesome.com/e0c9df4dfd.js"
+			crossorigin="anonymous"
+			SameSite="None"></script>
+	</body>
+</html>

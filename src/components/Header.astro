@@ -1,0 +1,16 @@
+---
+interface Props {
+	name: string;
+}
+
+const { name } = Astro.props;
+---
+
+<header>
+	<img class="logo" src="/logo.png" alt="logo" />
+	<h1><span class="sign">$</span> npm i jonathangomz<span class="underline-blink">_</span></h1>
+	<code><span class="curly">{'{'}</span> <span class="fieldname">name</span>: <span class="value">'{name}'</span> <span class="curly">{'}'}</span></code>
+	<div class="sections">
+		<a class="btn section-option" href="#projects"><span class="sign">$</span> ls projects<span class="underline-blink">_</span></a>
+	</div>
+</header>
