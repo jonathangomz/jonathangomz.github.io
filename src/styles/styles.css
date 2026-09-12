@@ -187,6 +187,11 @@ body {
 .brand .prefix {
 	display: inline-block;
 	overflow: hidden;
+	/* overflow: hidden puts an inline-block's baseline at its bottom margin
+	   edge, so a baseline-aligned .prefix sat a full line-height above the
+	   baseline and stretched the line box, pushing the name down inside it.
+	   Aligning to the bottom keeps it out of the line box calculation. */
+	vertical-align: bottom;
 	width: 13ch;
 	white-space: nowrap;
 	animation: prefix-out 0.45s cubic-bezier(0.65, 0, 0.25, 1) 1.7s forwards;
