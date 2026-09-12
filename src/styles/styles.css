@@ -17,7 +17,7 @@
 /* Typography */
 
 html {
-	font-family: "Roboto Mono", monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 }
 
 body {
