@@ -490,7 +490,6 @@ pre.json .p { color: var(--dim); }
 .card {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 	border: 1px solid var(--font-color);
 	color: var(--font-color);
 	padding: 12px;
@@ -502,16 +501,35 @@ pre.json .p { color: var(--dim); }
 .card-details { margin-bottom: 10px; font-size: 0.84rem; line-height: 1.6; }
 .card .btn { color: var(--pink); }
 .card.soon { color: var(--dim); border-color: var(--rule); }
+.card.soon .card-title { color: var(--dim); }
 
+/* Grid stretches every card to its row's height. Collecting that slack in one
+   place above the buttons keeps the title, rule and description at the top of
+   each card; `space-between` would instead share it between every pair of
+   children, so each card would sit its rule at a different height. */
 .card-actions {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
+	margin-top: auto;
 }
 
 /* Each button takes an equal share of the row, and drops to its own full-width
    row when the card is too narrow to hold both. */
 .card-actions .btn { flex: 1 1 7rem; }
+
+/* Each card subscribes to the grid's own rows, so the four bands line up across
+   a row even when a title wraps to a second line. */
+@supports (grid-template-rows: subgrid) {
+	.card {
+		display: grid;
+		grid-row: span 4;
+		grid-template-rows: subgrid;
+		row-gap: 0;
+	}
+
+	.card-actions { margin-top: 0; }
+}
 
 .card .btn-repo {
 	display: inline-flex;
