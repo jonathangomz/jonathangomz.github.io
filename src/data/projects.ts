@@ -45,6 +45,12 @@ export const projects: Project[] = [
 		repo: 'https://github.com/UMMobile/ummobile_custom_http',
 	},
 	{
+		title: 'pnsys',
+		details:
+			'An Express API for multi-app push notifications over OneSignal, with JWT and master key auth, roles and analytics. Reached production behind the university API gateway.',
+		repo: 'https://github.com/jonathangomz/pnsys',
+	},
+	{
 		title: 'Devotionals API',
 		details:
 			'A NestJS REST API serving devotional books from MongoDB, with endpoints for a whole book or just the current day.',
