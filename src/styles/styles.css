@@ -467,17 +467,39 @@ body {
 
 /* application/json */
 
-pre.json {
-	margin: 0;
-	overflow-x: auto;
+.json {
 	color: var(--cyan);
 	font-size: 0.8rem;
 	line-height: 1.7;
 }
 
-pre.json .k { color: var(--pink); }
-pre.json .s { color: var(--orange); }
-pre.json .p { color: var(--dim); }
+/* Keys size the first column, so the values line up without padding the text
+   with spaces — which is what forced `white-space: pre` and the sideways
+   scrollbar. minmax(0, 1fr) lets the value column shrink below its content
+   instead of pushing the row wider than the panel. */
+.json-rows {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	column-gap: 1ch;
+	padding-left: 2ch;
+}
+
+/* A value never breaks mid-token; lines break at the space after a comma. The
+   last resort is for a single value longer than a narrow screen. */
+.json .s { white-space: nowrap; }
+.json .v { overflow-wrap: anywhere; }
+
+/* A link value is one unbreakable token, and two of these URLs are wider than
+   a phone once the key column is taken out. Rather than break a URL mid-word,
+   give the value its own indented line. */
+@media (max-width: 600px) {
+	.json-links .json-rows { grid-template-columns: minmax(0, 1fr); }
+	.json-links .v { padding-left: 2ch; }
+}
+
+.json .k { color: var(--pink); }
+.json .s { color: var(--orange); }
+.json .p { color: var(--dim); }
 
 /* ═══ Project cards (text/html) ══════════════════════════════════════════════ */
 

@@ -2,20 +2,19 @@
 /**
  * Renders a flat object as syntax-coloured JSON without shipping a highlighter.
  *
- * The markup is assembled here rather than in the template because inside a
- * <pre> the template's own indentation becomes significant whitespace, which
- * puts every token on its own line. Building the string gives exact control.
+ * Keys and values are separate grid cells rather than text padded with spaces,
+ * so the value column aligns itself to the widest key and long arrays reflow
+ * inside the panel instead of scrolling sideways. Wrapped lines land under the
+ * start of the value, the way a formatter would indent them.
  *
  * Only used for genuinely flat, short data (/stack, /contact) — anything with
  * prose in it is served as text/markdown and rendered as writing instead.
  */
 interface Props {
 	data: Record<string, string | string[]>;
-	/** Pad keys so values line up, the way a formatter would. */
-	align?: boolean;
 }
 
-const { data, align = true } = Astro.props;
+const { data } = Astro.props;
 
 const escape = (value: string) =>
 	value
@@ -28,19 +27,24 @@ const str = (value: string) => `<span class="s">"${escape(value)}"</span>`;
 const punct = (value: string) => `<span class="p">${value}</span>`;
 
 const entries = Object.entries(data);
-const width = align ? Math.max(...entries.map(([key]) => key.length)) : 0;
 
-const lines = entries.map(([key, value], index) => {
-	const gap = ' '.repeat(width - key.length + 1);
+/* The single space after each comma is the only place a line may break, since
+   .s is nowrap — so a value never splits in the middle. */
+const rows = entries.map(([key, value], index) => {
 	const rendered = Array.isArray(value)
-		? punct('[') + value.map(str).join(punct(', ')) + punct(']')
+		? punct('[') + value.map(str).join(punct(',') + ' ') + punct(']')
 		: str(value);
 	const comma = index < entries.length - 1 ? punct(',') : '';
 
-	return `  <span class="k">"${escape(key)}"</span>${punct(':')}${gap}${rendered}${comma}`;
+	return (
+		`<span class="kc"><span class="k">"${escape(key)}"</span>${punct(':')}</span>` +
+		`<span class="v">${rendered}${comma}</span>`
+	);
 });
-
-const json = [punct('{'), ...lines, punct('}')].join('\n');
 ---
 
-<pre class="json" set:html={json}></pre>
+<div class="json">
+	<span class="p">&#123;</span>
+	<div class="json-rows" set:html={rows.join('')}></div>
+	<span class="p">&#125;</span>
+</div>

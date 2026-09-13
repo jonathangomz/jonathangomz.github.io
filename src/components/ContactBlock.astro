@@ -7,9 +7,8 @@ import type { ContactLink } from '../data/profile';
  * are real anchors rather than text you have to retype. API explorers render
  * JSON links the same way.
  *
- * Assembled here rather than in the template: inside a <pre> the template's own
- * indentation becomes significant whitespace and puts every token on its own
- * line.
+ * Same grid as JsonBlock: the value column aligns to the widest key on its own,
+ * and a value too long for a narrow screen wraps rather than scrolling.
  */
 interface Props {
 	links: ContactLink[];
@@ -21,19 +20,22 @@ const escape = (value: string) =>
 	value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 const punct = (value: string) => `<span class="p">${value}</span>`;
-const width = Math.max(...links.map((link) => link.key.length));
 
 const rows = links.map((link, index) => {
-	const gap = ' '.repeat(width - link.key.length + 1);
 	const anchor =
 		`<a class="s" href="${escape(link.href)}" target="_blank" rel="noreferrer">` +
 		`"${escape(link.display)}"</a>`;
 	const comma = index < links.length - 1 ? punct(',') : '';
 
-	return `  <span class="k">"${escape(link.key)}"</span>${punct(':')}${gap}${anchor}${comma}`;
+	return (
+		`<span class="kc"><span class="k">"${escape(link.key)}"</span>${punct(':')}</span>` +
+		`<span class="v">${anchor}${comma}</span>`
+	);
 });
-
-const json = [punct('{'), ...rows, punct('}')].join('\n');
 ---
 
-<pre class="json" set:html={json}></pre>
+<div class="json json-links">
+	<span class="p">&#123;</span>
+	<div class="json-rows" set:html={rows.join('')}></div>
+	<span class="p">&#125;</span>
+</div>
