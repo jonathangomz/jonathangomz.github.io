@@ -11,6 +11,7 @@ export const about = {
 	paragraphs: [
 		'Senior software developer with over 8 years of experience, specialising in backend. Strong background in designing RESTful and gRPC APIs, worker services and database architecture, refactoring legacy systems into modern, maintainable ones.',
 		'Experienced in academic and financial environments, collaborating with multidisciplinary teams and delivering scalable backend services.',
+		'Not a frontend specialist, but has delivered enough of it to lead those decisions, and to let the way a client actually consumes an API shape how that API is designed.',
 	],
 	philosophy:
 		"Write your code so well that you are replaceable, but write your code so well that they don't want to replace you.",
@@ -54,10 +55,12 @@ export const experience: Job[] = [
  * data genuinely is JSON-shaped, so it is served as JSON.
  */
 export const stack: Record<string, string[]> = {
-	languages: ['C#', 'T-SQL', 'TypeScript', 'Dart', 'Java'],
-	backend: ['ASP.NET Core 8+', '.NET Framework 4.7.2', 'NestJS', 'Spring Boot'],
+	languages: ['C#', 'T-SQL', 'PL/pgSQL', 'TypeScript', 'JavaScript', 'Dart', 'Java'],
+	backend: ['ASP.NET Core 8+', '.NET Framework 4.7.2', 'NestJS', 'Express', 'Spring Boot'],
+	frontend: ['Flutter', 'Angular', 'React', 'Vue'],
 	databases: ['SQL Server', 'PostgreSQL', 'MongoDB'],
-	protocols: ['REST', 'gRPC', 'ISO 8583', 'OpenAPI'],
+	apis: ['REST', 'gRPC', 'OpenAPI'],
+	payments: ['ISO 8583'],
 	ops: ['Azure DevOps', 'GitHub Actions', 'Nginx', 'IIS'],
 };
 
