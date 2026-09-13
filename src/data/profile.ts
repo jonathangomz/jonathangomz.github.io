@@ -60,6 +60,7 @@ export const stack: Record<string, string[]> = {
 	frontend: ['Flutter', 'Angular', 'React', 'Vue'],
 	databases: ['SQL Server', 'PostgreSQL', 'MongoDB'],
 	apis: ['REST', 'gRPC', 'OpenAPI'],
+	auth: ['JWT', 'OAuth 2.0', 'SSO'],
 	payments: ['ISO 8583'],
 	ops: ['Azure DevOps', 'GitHub Actions', 'Nginx', 'IIS'],
 };

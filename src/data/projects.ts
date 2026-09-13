@@ -69,10 +69,4 @@ export const projects: Project[] = [
 		href: 'https://jonathangomz.github.io/quotes/',
 		repo: 'https://github.com/jonathangomz/quotes',
 	},
-	{
-		title: 'Truth table',
-		details: 'A generator of table of truth with a certain condition given.',
-		href: 'https://jonathangomz.github.io/TruthTableGenerator/',
-		repo: 'https://github.com/jonathangomz/TruthTableGenerator',
-	},
 ];
