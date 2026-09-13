@@ -9,7 +9,7 @@ export interface Job {
 /** GET /about — prose, so it renders as prose. */
 export const about = {
 	paragraphs: [
-		'Senior software developer with over 8 years of experience, specialising in backend. Strong background in designing RESTful and gRPC APIs, worker services and database architecture, refactoring legacy systems into modern, maintainable ones.',
+		'Senior software developer working on production systems since 2016, specialising in backend. Strong background in designing RESTful and gRPC APIs, worker services and database architecture, refactoring legacy systems into modern, maintainable ones.',
 		'Experienced in academic and financial environments, collaborating with multidisciplinary teams and delivering scalable backend services.',
 		'Not a frontend specialist, but has delivered enough of it to lead those decisions, and to let the way a client actually consumes an API shape how that API is designed.',
 	],
@@ -43,7 +43,7 @@ export const experience: Job[] = [
 		highlights: [
 			"Led the university's open-source mobile app: Angular, later migrated to Flutter, with a NestJS API.",
 			'Published open-source Dart packages to pub.dev (ummobile_sdk, ummobile_custom_http) to decouple business logic.',
-			'Maintained EduAdvent, a school management system, deployed across Mexico, El Salvador and Panama.',
+			'Sole maintainer of EduAdvent, a school management system deployed across Mexico, El Salvador and Panama: J2EE codebase, PostgreSQL database and Tomcat production deploys.',
 			'Configured Linux servers with Nginx for sandbox and production environments.',
 			'Taught web and software development at the Faculty of Engineering and Technology.',
 		],
