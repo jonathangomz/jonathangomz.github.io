@@ -18,16 +18,16 @@ export const projects: Project[] = [
 		repo: 'https://github.com/jonathangomz/notion_api',
 	},
 	{
-		title: 'UMMobile app',
-		details:
-			"Montemorelos University's open source mobile app, built with Flutter after migrating it from Angular.",
-		repo: 'https://github.com/UMMobile/ummobile_app',
-	},
-	{
 		title: 'UMMobile API',
 		details:
 			'The NestJS API behind the app, collecting every other API the university exposes behind one surface.',
 		repo: 'https://github.com/UMMobile/ummobile-api',
+	},
+	{
+		title: 'UMMobile app',
+		details:
+			"Montemorelos University's open source mobile app, built with Flutter after migrating it from Angular.",
+		repo: 'https://github.com/UMMobile/ummobile_app',
 	},
 	{
 		title: 'ummobile_sdk',
@@ -45,18 +45,6 @@ export const projects: Project[] = [
 		repo: 'https://github.com/UMMobile/ummobile_custom_http',
 	},
 	{
-		title: 'Daily quote',
-		details: 'A simple page that display a different quote every day.',
-		href: 'https://jonathangomz.github.io/quotes/',
-		repo: 'https://github.com/jonathangomz/quotes',
-	},
-	{
-		title: 'Truth table',
-		details: 'A generator of table of truth with a certain condition given.',
-		href: 'https://jonathangomz.github.io/TruthTableGenerator/',
-		repo: 'https://github.com/jonathangomz/TruthTableGenerator',
-	},
-	{
 		title: 'Devotionals API',
 		details:
 			'A NestJS REST API serving devotional books from MongoDB, with endpoints for a whole book or just the current day.',
@@ -68,5 +56,17 @@ export const projects: Project[] = [
 			'Implements the Spotify OAuth authorization code flow from scratch, then clones a playlist into the signed-in account.',
 		href: 'https://playlist-cloner.vercel.app/cloner',
 		repo: 'https://github.com/jonathangomz/playlist-cloner',
+	},
+	{
+		title: 'Daily quote',
+		details: 'A simple page that display a different quote every day.',
+		href: 'https://jonathangomz.github.io/quotes/',
+		repo: 'https://github.com/jonathangomz/quotes',
+	},
+	{
+		title: 'Truth table',
+		details: 'A generator of table of truth with a certain condition given.',
+		href: 'https://jonathangomz.github.io/TruthTableGenerator/',
+		repo: 'https://github.com/jonathangomz/TruthTableGenerator',
 	},
 ];
