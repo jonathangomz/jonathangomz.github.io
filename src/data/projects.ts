@@ -64,7 +64,8 @@ export const projects: Project[] = [
 	},
 	{
 		title: 'Playlist cloner',
-		details: 'A webapp made with Nextjs for Spotify playlist cloning using the Spotify api.',
+		details:
+			'Implements the Spotify OAuth authorization code flow from scratch, then clones a playlist into the signed-in account.',
 		href: 'https://playlist-cloner.vercel.app/cloner',
 		repo: 'https://github.com/jonathangomz/playlist-cloner',
 	},
