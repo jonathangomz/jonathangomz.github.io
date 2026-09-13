@@ -43,7 +43,7 @@ export const experience: Job[] = [
 		highlights: [
 			"Led the university's open-source mobile app: Angular, later migrated to Flutter, with a NestJS API.",
 			'Published open-source Dart packages to pub.dev (ummobile_sdk, ummobile_custom_http) to decouple business logic.',
-			'Sole maintainer of EduAdvent, a school management system deployed across Mexico, El Salvador and Panama: J2EE codebase, PostgreSQL database and Tomcat production deploys.',
+			'Sole maintainer of EduAdvent, first as an undergraduate and later as staff: the J2EE codebase, PostgreSQL database and Tomcat production deploys of a school management system running in Mexico, El Salvador and Panama.',
 			'Configured Linux servers with Nginx for sandbox and production environments.',
 			'Taught web and software development at the Faculty of Engineering and Technology.',
 		],
