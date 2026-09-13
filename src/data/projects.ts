@@ -57,10 +57,10 @@ export const projects: Project[] = [
 		repo: 'https://github.com/jonathangomz/TruthTableGenerator',
 	},
 	{
-		title: 'Devotionals',
-		details: 'A simple web application just to read asd devotionals.',
-		href: 'https://devotionals.vercel.app/',
-		repo: 'https://github.com/jonathangomz/devotionals-app-web',
+		title: 'Devotionals API',
+		details:
+			'A NestJS REST API serving devotional books from MongoDB, with endpoints for a whole book or just the current day.',
+		repo: 'https://github.com/jonathangomz/devotionals-api',
 	},
 	{
 		title: 'Playlist cloner',
