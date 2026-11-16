@@ -65,7 +65,7 @@ export const projects: Project[] = [
 	},
 	{
 		title: 'Daily quote',
-		details: 'A simple page that display a different quote every day.',
+		details: 'A simple page that displays a different quote every day.',
 		href: 'https://jonathangomz.github.io/quotes/',
 		repo: 'https://github.com/jonathangomz/quotes',
 	},
