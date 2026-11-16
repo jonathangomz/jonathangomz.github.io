@@ -8,7 +8,8 @@ Personal site, built with [Astro](https://astro.build) and deployed to GitHub Pa
 | :---------------- | :------------------------------------------- |
 | `npm install`     | Install dependencies                          |
 | `npm run dev`     | Start the dev server at `localhost:4321`      |
-| `npm run build`   | Build the production site to `./dist/`        |
+| `npm run check`   | Run Astro & TypeScript diagnostics            |
+| `npm run build`   | Type-check and build the site to `./dist/`    |
 | `npm run preview` | Preview the build locally before deploying    |
 
 ## Project structure
