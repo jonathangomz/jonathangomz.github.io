@@ -11,8 +11,10 @@ interface Props {
 
 const {
 	title = 'Jonathan Gómez | Dev',
-	description = 'Author: J.C. Gómez, Year: 2020',
+	description = 'Senior Backend Software Developer specialising in .NET, RESTful & gRPC APIs, and database architecture.',
 } = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
@@ -24,6 +26,12 @@ const {
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<title>{title}</title>
+
+		<link rel="canonical" href={canonicalUrl} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
 
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
