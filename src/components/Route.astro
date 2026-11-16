@@ -17,9 +17,10 @@ interface Props {
 }
 
 const { method = 'GET', path, note, type, ms, open = false } = Astro.props;
+const id = path.replace(/^\//, '');
 ---
 
-<details class="route" open={open}>
+<details id={id} class="route" open={open}>
 	<summary class="ep">
 		<span class="verb">{method}</span>
 		<span class="path">{path}</span>

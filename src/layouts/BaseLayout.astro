@@ -74,6 +74,18 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 
 		<script is:inline>
 			(function () {
+				function openHashRoute() {
+					var id = location.hash.slice(1);
+					if (!id) return;
+					var el = document.getElementById(id);
+					if (el && el.tagName === "DETAILS") {
+						el.open = true;
+					}
+				}
+
+				openHashRoute();
+				window.addEventListener("hashchange", openHashRoute);
+
 				var select = document.getElementById("theme-select");
 				if (!select) return;
 				var root = document.documentElement;
