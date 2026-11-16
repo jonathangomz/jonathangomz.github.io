@@ -55,8 +55,7 @@
 /* Typography */
 
 html {
-	font-family: "Roboto Mono", monospace;
-	font-family: var(--font-jetbrains-mono), monospace;
+	font-family: var(--font-jetbrains-mono), "Roboto Mono", monospace;
 }
 
 body {
