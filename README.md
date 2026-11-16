@@ -14,11 +14,12 @@ Personal site, built with [Astro](https://astro.build) and deployed to GitHub Pa
 ## Project structure
 
 ```
-public/            static assets served as-is (favicon, logo, svg)
+public/            static assets served as-is (favicon)
 src/
-  components/      Header, Footer, ProjectCard, Analytics
-  data/projects.ts the project list rendered on the home page
-  layouts/         BaseLayout.astro — shared <head>, fonts, analytics
+  assets/fonts/    self-hosted JetBrains Mono font
+  components/      Header, Footer, Route, JsonBlock, ContactBlock, ProjectCard, SocialIcon
+  data/            profile.ts (about, experience, stack, contact), projects.ts
+  layouts/         BaseLayout.astro — shared <head>, fonts, theme & boot scripts
   pages/           index.astro, 404.astro
   styles/          reset.css, styles.css
 ```
