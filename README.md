@@ -22,6 +22,7 @@ src/
   layouts/         BaseLayout.astro — shared <head>, fonts, theme & boot scripts
   pages/           index.astro, 404.astro
   styles/          reset.css, styles.css
+  utils/           json.ts — shared JSON formatting helpers
 ```
 
 To add a project to the home page, append an entry to `src/data/projects.ts`.

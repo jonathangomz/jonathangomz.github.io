@@ -1,4 +1,6 @@
 ---
+import { escape, punct, str } from '../utils/json';
+
 /**
  * Renders a flat object as syntax-coloured JSON without shipping a highlighter.
  *
@@ -15,16 +17,6 @@ interface Props {
 }
 
 const { data } = Astro.props;
-
-const escape = (value: string) =>
-	value
-		.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;');
-
-const str = (value: string) => `<span class="s">"${escape(value)}"</span>`;
-const punct = (value: string) => `<span class="p">${value}</span>`;
 
 const entries = Object.entries(data);
 

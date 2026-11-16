@@ -1,5 +1,6 @@
 ---
 import type { ContactLink } from '../data/profile';
+import { escape, punct } from '../utils/json';
 
 /**
  * The /contact response. Shaped as JSON like /stack, because a handful of
@@ -15,11 +16,6 @@ interface Props {
 }
 
 const { links } = Astro.props;
-
-const escape = (value: string) =>
-	value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-const punct = (value: string) => `<span class="p">${value}</span>`;
 
 const rows = links.map((link, index) => {
 	const anchor =
