@@ -500,6 +500,11 @@ body {
 .json .s { color: var(--orange); }
 .json .p { color: var(--dim); }
 
+.json-links a:focus-visible {
+	outline: 2px solid var(--orange);
+	outline-offset: 2px;
+}
+
 /* ═══ Project cards (text/html) ══════════════════════════════════════════════ */
 
 .cards {
@@ -592,6 +597,11 @@ hr {
 	color: var(--background-color);
 }
 
+.btn:focus-visible {
+	outline: 2px solid var(--orange);
+	outline-offset: 2px;
+}
+
 /* ═══ Blink ══════════════════════════════════════════════════════════════════ */
 
 span.underline-blink { animation: underline-blink 1s linear infinite; }
@@ -629,6 +639,11 @@ footer {
 }
 
 .icons-social a:hover { color: var(--font-color); }
+
+.icons-social a:focus-visible {
+	outline: 2px solid var(--orange);
+	outline-offset: -2px;
+}
 
 /* ═══ Warm start & reduced motion ════════════════════════════════════════════
    A repeat visit within the session skips the boot the way a warm start skips
