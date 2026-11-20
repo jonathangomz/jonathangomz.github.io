@@ -70,7 +70,7 @@ body {
 .shell {
 	margin: 0 auto;
 	max-width: 760px;
-	padding: 28px 16px 90px;
+	padding: 28px 16px 130px;
 }
 
 /* ═══ Header: boot, then dock ════════════════════════════════════════════════
@@ -633,6 +633,147 @@ span.underline-blink { animation: underline-blink 1s linear infinite; }
 	to { transform: translateY(0); }
 }
 
+/* ═══ Live Log Drawer (docked above fixed footer) ═══════════════════════════ */
+
+.log-drawer {
+	display: none;
+}
+
+[data-js] .log-drawer {
+	animation: footer-up 0.45s cubic-bezier(0.25, 0.9, 0.3, 1) 2.35s both;
+	bottom: 49px;
+	display: block;
+	left: 0;
+	pointer-events: none;
+	position: fixed;
+	right: 0;
+	z-index: 15;
+}
+
+.log-drawer-inner {
+	background-color: var(--background-color);
+	border: 1px solid var(--rule);
+	border-bottom: 0;
+	margin: 0 auto;
+	max-width: 728px;
+	pointer-events: auto;
+}
+
+.log-drawer-toggle {
+	align-items: center;
+	background: var(--surface);
+	border: 0;
+	color: var(--dim);
+	cursor: pointer;
+	display: flex;
+	font: inherit;
+	font-size: 0.74rem;
+	justify-content: space-between;
+	padding: 6px 14px;
+	text-align: left;
+	transition: background 0.15s, color 0.15s;
+	width: 100%;
+}
+
+.log-drawer-toggle:hover {
+	color: var(--font-color);
+}
+
+.log-drawer-toggle:focus-visible {
+	outline: 2px solid var(--orange);
+	outline-offset: -2px;
+}
+
+.log-drawer-label,
+.log-drawer-meta {
+	align-items: center;
+	display: inline-flex;
+	gap: 6px;
+}
+
+.log-title {
+	color: var(--pink);
+	font-weight: 700;
+}
+
+.log-drawer[data-stream-status="live"] .log-dot {
+	color: var(--font-color);
+	animation: dot-flicker 1.8s ease-in-out infinite;
+}
+
+.log-drawer[data-stream-status="live"] .log-state {
+	color: var(--font-color);
+}
+
+.log-drawer[data-stream-status="offline"] .log-dot {
+	color: #ff5555;
+}
+
+.log-count {
+	border: 1px solid color-mix(in srgb, var(--rule) 55%, transparent);
+	color: var(--cyan);
+	font-size: 0.68rem;
+	line-height: 1.2;
+	padding: 1px 6px;
+}
+
+.log-chev {
+	font-size: 0.65rem;
+	transition: transform 0.15s;
+}
+
+.log-drawer-toggle[aria-expanded="true"] .log-chev {
+	transform: rotate(180deg);
+}
+
+.log-console {
+	background: color-mix(in srgb, var(--background-color) 100%, black var(--resp-tint, 14%));
+	border-top: 1px solid color-mix(in srgb, var(--rule) 45%, transparent);
+	font-size: 0.74rem;
+	line-height: 1.55;
+	max-height: 180px;
+	overflow-y: auto;
+	padding: 8px 14px;
+}
+
+.log-console[hidden] {
+	display: none;
+}
+
+.log-empty {
+	color: var(--dim);
+	margin: 0;
+}
+
+.log-line {
+	color: var(--cyan);
+	margin: 0;
+	overflow-wrap: anywhere;
+	white-space: pre-wrap;
+}
+
+.log-line .log-ts {
+	color: var(--dim);
+}
+
+.log-line .log-lvl {
+	color: var(--font-color);
+	font-weight: 700;
+}
+
+.log-line .log-lvl[data-level="WRN"] {
+	color: var(--orange);
+}
+
+.log-line .log-lvl[data-level="ERR"],
+.log-line .log-lvl[data-level="FTL"] {
+	color: #ff5555;
+}
+
+.log-line[data-source="Cache"] .log-msg {
+	color: var(--orange);
+}
+
 /* ═══ Footer ═════════════════════════════════════════════════════════════════ */
 
 footer {
@@ -647,6 +788,7 @@ footer {
 	position: fixed;
 	text-align: center;
 	width: 100%;
+	z-index: 16;
 }
 
 .icons-social a {
@@ -679,11 +821,13 @@ footer {
 .warm .routes,
 .warm .app-header,
 .warm .app-header::after,
+.warm .log-drawer,
 .warm footer {
 	animation: none;
 }
 
 .warm .app-header::after { transform: scaleX(1); }
+.warm .log-drawer,
 .warm footer { transform: none; }
 
 .warm .dock { min-height: 0; }
@@ -705,13 +849,17 @@ footer {
 	.routes,
 	.app-header,
 	.app-header::after,
+	.log-drawer,
 	footer,
 	span.underline-blink,
-	.brand .status[data-api-status="online"] .dot {
+	.brand .status[data-api-status="online"] .dot,
+	.log-drawer[data-stream-status="live"] .dot,
+	.log-drawer[data-stream-status="live"] .log-dot {
 		animation: none;
 	}
 
 	.app-header::after { transform: scaleX(1); }
+	.log-drawer,
 	footer { transform: none; }
 
 	.dock { min-height: 0; }

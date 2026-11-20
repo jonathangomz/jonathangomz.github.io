@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Net.Http.Headers;
+using Portfolio.Api.Logging;
 using Portfolio.Application.Abstractions;
 using Portfolio.Domain.Entities;
 
@@ -10,9 +12,12 @@ public static class PortfolioEndpoints
 {
     private const string MarkdownContentType = "text/markdown; charset=utf-8";
     private const string HtmlContentType = "text/html; charset=utf-8";
+    private const string EventStreamContentType = "text/event-stream; charset=utf-8";
     private const string JsonMediaType = "application/json";
     private const string MarkdownMediaType = "text/markdown";
     private const string HtmlMediaType = "text/html";
+
+    private static readonly JsonSerializerOptions SseJsonOptions = new(JsonSerializerDefaults.Web);
 
     private const string GitHubIconSvg =
         "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\" width=\"0.875em\" height=\"1em\" " +
@@ -70,6 +75,29 @@ public static class PortfolioEndpoints
             return TypedResults.Ok(portfolio);
         })
         .WithName("GetPortfolio");
+
+        group.MapGet("/logs/stream", async (HttpContext httpContext, LogStreamBroadcaster broadcaster, CancellationToken ct) =>
+        {
+            httpContext.Response.ContentType = EventStreamContentType;
+            httpContext.Response.Headers.CacheControl = "no-cache";
+            httpContext.Response.Headers["X-Accel-Buffering"] = "no";
+
+            await httpContext.Response.Body.FlushAsync(ct);
+
+            try
+            {
+                await foreach (var entry in broadcaster.SubscribeAsync(ct))
+                {
+                    var json = JsonSerializer.Serialize(entry, SseJsonOptions);
+                    await httpContext.Response.WriteAsync($"data: {json}\n\n", ct);
+                    await httpContext.Response.Body.FlushAsync(ct);
+                }
+            }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            {
+            }
+        })
+        .WithName("GetLogStream");
 
         return endpoints;
     }

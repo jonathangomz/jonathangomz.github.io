@@ -8,8 +8,14 @@ public sealed class RequestLoggingMiddleware(
 {
     public async Task InvokeAsync(HttpContext context)
     {
-        var method = context.Request.Method;
         var path = context.Request.Path.Value ?? "/";
+        if (string.Equals(path, "/logs/stream", StringComparison.OrdinalIgnoreCase))
+        {
+            await next(context);
+            return;
+        }
+
+        var method = context.Request.Method;
 
         logger.LogInformation("HTTP {RequestMethod} {RequestPath} started", method, path);
 

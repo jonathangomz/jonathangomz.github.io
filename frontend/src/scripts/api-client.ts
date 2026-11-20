@@ -14,9 +14,17 @@ interface FetchResult<T> {
 	contentType: string | null;
 }
 
+interface LogStreamEntry {
+	timestamp: string;
+	level: string;
+	source: string;
+	message: string;
+}
+
 const DEFAULT_API_URL = 'http://localhost:5080';
 const REQUEST_TIMEOUT_MS = 4000;
 const HEALTH_POLL_INTERVAL_MS = 15000;
+const MAX_LOG_DOM_ENTRIES = 100;
 
 const SOCIAL_ICON_PATHS: Record<string, string> = {
 	github:
@@ -280,19 +288,146 @@ async function hydrateRoutes(baseUrl: string): Promise<boolean> {
 export async function initPortfolioApiClient(): Promise<void> {
 	const baseUrl = getApiBaseUrl();
 	let isOnline = false;
+	let logEventSource: EventSource | null = null;
+	let totalLogEntries = 0;
+
+	const drawerEl = document.querySelector<HTMLElement>('[data-log-drawer]');
+	const toggleBtn = document.querySelector<HTMLButtonElement>('[data-log-toggle]');
+	const consoleEl = document.querySelector<HTMLElement>('[data-log-console]');
+	const stateEl = document.querySelector<HTMLElement>('[data-log-state]');
+	const countEl = document.querySelector<HTMLElement>('[data-log-count]');
+	const emptyEl = document.querySelector<HTMLElement>('[data-log-empty]');
+
+	function setLogStreamStatus(status: 'live' | 'offline'): void {
+		if (drawerEl) {
+			drawerEl.setAttribute('data-stream-status', status);
+		}
+		if (stateEl) {
+			stateEl.textContent = status;
+		}
+	}
+
+	function formatTimestamp(isoString: string): string {
+		const date = new Date(isoString);
+		if (Number.isNaN(date.getTime())) {
+			return isoString;
+		}
+		const hh = String(date.getHours()).padStart(2, '0');
+		const mm = String(date.getMinutes()).padStart(2, '0');
+		const ss = String(date.getSeconds()).padStart(2, '0');
+		const ms = String(date.getMilliseconds()).padStart(3, '0');
+		return `${hh}:${mm}:${ss}.${ms}`;
+	}
+
+	function appendLogEntry(entry: LogStreamEntry): void {
+		if (!consoleEl) return;
+
+		if (emptyEl && !emptyEl.hidden) {
+			emptyEl.hidden = true;
+		}
+
+		const lineEl = document.createElement('p');
+		lineEl.className = 'log-line';
+		lineEl.setAttribute('data-source', entry.source);
+
+		const tsSpan = document.createElement('span');
+		tsSpan.className = 'log-ts';
+		tsSpan.textContent = `[${formatTimestamp(entry.timestamp)}] `;
+
+		const lvlSpan = document.createElement('span');
+		lvlSpan.className = 'log-lvl';
+		lvlSpan.setAttribute('data-level', entry.level);
+		lvlSpan.textContent = `${entry.level} `;
+
+		const msgSpan = document.createElement('span');
+		msgSpan.className = 'log-msg';
+		msgSpan.textContent = entry.message;
+
+		lineEl.append(tsSpan, lvlSpan, msgSpan);
+		consoleEl.appendChild(lineEl);
+
+		const lines = consoleEl.querySelectorAll('.log-line');
+		if (lines.length > MAX_LOG_DOM_ENTRIES) {
+			lines[0]?.remove();
+		}
+
+		totalLogEntries += 1;
+		if (countEl) {
+			countEl.textContent = String(totalLogEntries);
+		}
+
+		consoleEl.scrollTop = consoleEl.scrollHeight;
+	}
+
+	function connectLogStream(): void {
+		if (logEventSource || typeof EventSource === 'undefined') {
+			return;
+		}
+
+		const source = new EventSource(`${baseUrl}/logs/stream`);
+		logEventSource = source;
+
+		source.onopen = () => {
+			setLogStreamStatus('live');
+		};
+
+		source.onmessage = (event: MessageEvent<string>) => {
+			try {
+				const parsed = JSON.parse(event.data) as LogStreamEntry;
+				if (parsed && typeof parsed.message === 'string') {
+					setLogStreamStatus('live');
+					appendLogEntry(parsed);
+				}
+			} catch {
+				// Ignore malformed frames
+			}
+		};
+
+		source.onerror = () => {
+			if (!isOnline) {
+				disconnectLogStream();
+			}
+		};
+	}
+
+	function disconnectLogStream(): void {
+		if (logEventSource) {
+			logEventSource.close();
+			logEventSource = null;
+		}
+		setLogStreamStatus('offline');
+	}
+
+	if (toggleBtn && consoleEl) {
+		toggleBtn.addEventListener('click', () => {
+			const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+			const nextExpanded = !expanded;
+			toggleBtn.setAttribute('aria-expanded', String(nextExpanded));
+			consoleEl.hidden = !nextExpanded;
+			if (nextExpanded) {
+				consoleEl.scrollTop = consoleEl.scrollHeight;
+			}
+		});
+	}
 
 	async function syncWithApi(forceHydrate: boolean): Promise<void> {
 		const healthy = await checkHealth(baseUrl);
 		if (!healthy) {
 			isOnline = false;
 			setApiStatus('offline');
+			disconnectLogStream();
 			return;
 		}
+
+		connectLogStream();
 
 		if (forceHydrate || !isOnline) {
 			const hydrated = await hydrateRoutes(baseUrl);
 			isOnline = hydrated;
 			setApiStatus(hydrated ? 'online' : 'offline');
+			if (!hydrated) {
+				disconnectLogStream();
+			}
 			return;
 		}
 

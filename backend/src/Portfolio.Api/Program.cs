@@ -1,4 +1,5 @@
 using Portfolio.Api.Endpoints;
+using Portfolio.Api.Logging;
 using Portfolio.Api.Middleware;
 using Portfolio.Application;
 using Portfolio.Infrastructure;
@@ -9,6 +10,9 @@ const string CorsPolicyName = "PortfolioCors";
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<LogStreamBroadcaster>();
+builder.Services.AddSingleton<InMemoryLogStreamSink>();
+
 builder.Host.UseSerilog((context, services, configuration) =>
 {
     configuration
@@ -17,7 +21,8 @@ builder.Host.UseSerilog((context, services, configuration) =>
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services)
         .Enrich.FromLogContext()
-        .WriteTo.Console();
+        .WriteTo.Console()
+        .WriteTo.Sink(services.GetRequiredService<InMemoryLogStreamSink>());
 });
 
 builder.Services.AddApplication();

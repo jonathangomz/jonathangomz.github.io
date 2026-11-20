@@ -1,0 +1,37 @@
+---
+// Collapsible live terminal log drawer docked right above the fixed footer.
+---
+
+<aside class="log-drawer" data-log-drawer data-stream-status="offline" aria-label="Live API logs">
+	<div class="log-drawer-inner">
+		<button
+			type="button"
+			class="log-drawer-toggle"
+			data-log-toggle
+			aria-expanded="false"
+			aria-controls="log-console-panel"
+		>
+			<span class="log-drawer-label">
+				<span class="log-dot" aria-hidden="true">●</span>
+				<span class="log-title">logs</span>
+				<span class="log-sep" aria-hidden="true">·</span>
+				<span class="log-state" data-log-state>offline</span>
+			</span>
+			<span class="log-drawer-meta">
+				<span class="log-count" data-log-count>0</span>
+				<span class="log-chev" aria-hidden="true">▲</span>
+			</span>
+		</button>
+		<div
+			id="log-console-panel"
+			class="log-console"
+			data-log-console
+			role="log"
+			aria-live="polite"
+			aria-relevant="additions"
+			hidden
+		>
+			<p class="log-empty" data-log-empty>Waiting for API log stream...</p>
+		</div>
+	</div>
+</aside>

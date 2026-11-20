@@ -1,7 +1,9 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Portfolio.Api.Logging;
 using Portfolio.Domain.Entities;
 
 namespace Portfolio.Tests.Endpoints;
@@ -186,5 +188,60 @@ public sealed class PortfolioEndpointsTests(WebApplicationFactory<Program> facto
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.False(response.Headers.Contains("Access-Control-Allow-Origin"));
+    }
+
+    [Fact]
+    public async Task GetLogStream_ReplaysKnownRouteAndCacheLogs_AndExcludesUnknownPaths()
+    {
+        await _client.GetAsync("/about");
+        await _client.GetAsync("/unknown-malicious-path");
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        using var response = await _client.GetAsync(
+            "/logs/stream",
+            HttpCompletionOption.ResponseHeadersRead,
+            cts.Token);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("text/event-stream", response.Content.Headers.ContentType?.MediaType);
+
+        await using var stream = await response.Content.ReadAsStreamAsync(cts.Token);
+        using var reader = new StreamReader(stream);
+
+        var entries = new List<LogStreamEntry>();
+        var jsonOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
+        while (!cts.Token.IsCancellationRequested)
+        {
+            var line = await reader.ReadLineAsync(cts.Token);
+            if (line is null)
+            {
+                break;
+            }
+
+            if (!line.StartsWith("data: ", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            var entry = JsonSerializer.Deserialize<LogStreamEntry>(line["data: ".Length..], jsonOptions);
+            if (entry is not null)
+            {
+                entries.Add(entry);
+                if (entries.Any(e => e.Source == "Request" && e.Message == "HTTP GET /about started") &&
+                    entries.Any(e => e.Source == "Cache" && e.Message.Contains("portfolio:about", StringComparison.Ordinal)) &&
+                    entries.Any(e => e.Source == "Request" && e.Message.StartsWith("HTTP GET /about finished with 200", StringComparison.Ordinal)))
+                {
+                    break;
+                }
+            }
+        }
+
+        Assert.NotEmpty(entries);
+        Assert.Contains(entries, e => e.Source == "Request" && e.Message == "HTTP GET /about started");
+        Assert.Contains(entries, e => e.Source == "Cache" && e.Message.StartsWith("Cache ", StringComparison.Ordinal) && e.Message.Contains("portfolio:about", StringComparison.Ordinal));
+        Assert.Contains(entries, e => e.Source == "Request" && e.Message.StartsWith("HTTP GET /about finished with 200", StringComparison.Ordinal));
+        Assert.DoesNotContain(entries, e => e.Message.Contains("/unknown-malicious-path", StringComparison.Ordinal));
+        Assert.DoesNotContain(entries, e => e.Message.Contains("/logs/stream", StringComparison.Ordinal));
     }
 }
