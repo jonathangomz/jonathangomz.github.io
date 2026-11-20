@@ -10,17 +10,15 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 concurrency:
   group: backend-azure
   cancel-in-progress: false
 
 jobs:
-  build-and-test:
+  build-and-push:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,41 +32,46 @@ jobs:
           dotnet-quality: preview
 
       - name: Restore dependencies
+        working-directory: ./backend
         run: dotnet restore Portfolio.slnx
 
       - name: Build
+        working-directory: ./backend
         run: dotnet build Portfolio.slnx --configuration Release --no-restore
 
       - name: Test
+        working-directory: ./backend
         run: dotnet test Portfolio.slnx --configuration Release --no-build --verbosity normal
 
-      - name: Publish
-        run: dotnet publish src/Portfolio.Api/Portfolio.Api.csproj --configuration Release --no-build --output ./publish
-
-      - name: Upload publish artifact
-        uses: actions/upload-artifact@v4
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          name: backend-publish
-          path: ./backend/publish
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/portfolio-api:latest
+            ghcr.io/${{ github.repository_owner }}/portfolio-api:${{ github.sha }}
 
   deploy:
-    needs: build-and-test
+    needs: build-and-push
     if: ${{ vars.AZURE_WEBAPP_NAME != '' }}
     runs-on: ubuntu-latest
     environment:
       name: production
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     steps:
-      - name: Download publish artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-publish
-          path: ./publish
-
-      - name: Deploy to Azure Web App
+      - name: Deploy container to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./publish
+          images: 'ghcr.io/${{ github.repository_owner }}/portfolio-api:latest'

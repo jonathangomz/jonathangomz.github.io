@@ -1,0 +1,11 @@
+**/.DS_Store
+**/bin/
+**/obj/
+**/out/
+**/publish/
+.git/
+.gitignore
+.junie/
+.vs/
+.idea/
+tests/
