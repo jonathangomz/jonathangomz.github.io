@@ -1,9 +1,12 @@
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Portfolio.Application.Abstractions;
 
 namespace Portfolio.Infrastructure.Caching;
 
-public sealed class MemoryCacheService(IMemoryCache memoryCache) : ICacheService
+public sealed class MemoryCacheService(
+    IMemoryCache memoryCache,
+    ILogger<MemoryCacheService> logger) : ICacheService
 {
     private static readonly TimeSpan DefaultExpiration = TimeSpan.FromMinutes(30);
 
@@ -15,9 +18,11 @@ public sealed class MemoryCacheService(IMemoryCache memoryCache) : ICacheService
     {
         if (memoryCache.TryGetValue(key, out T? cachedValue) && cachedValue is not null)
         {
+            logger.LogInformation("Cache hit for {CacheKey} (read from cache)", key);
             return cachedValue;
         }
 
+        logger.LogInformation("Cache miss for {CacheKey} (reading from repository)", key);
         var value = await factory(ct);
 
         var options = new MemoryCacheEntryOptions

@@ -27,12 +27,12 @@ Set `PUBLIC_API_URL` to point the frontend at a custom backend URL (defaults to 
 ### API Endpoints
 
 - `GET /health` — Health check endpoint (`200 OK` / `Healthy`)
-- `GET /about` — About paragraphs and engineering philosophy
-- `GET /experience` — Work experience entries
-- `GET /stack` — Technology stack grouped by category
-- `GET /projects` — Featured open-source and production projects
-- `GET /contact` — Social & contact links
-- `GET /portfolio` — Aggregated portfolio payload
+- `GET /about` — About paragraphs and engineering philosophy (`text/markdown` by default, or `application/json` via `Accept: application/json`)
+- `GET /experience` — Work experience entries (`text/markdown` by default, or `application/json` via `Accept: application/json`)
+- `GET /stack` — Technology stack grouped by category (`application/json`)
+- `GET /projects` — Featured open-source and production projects (`text/html` by default, or `application/json` via `Accept: application/json`)
+- `GET /contact` — Social & contact links (`application/json`)
+- `GET /portfolio` — Aggregated portfolio payload (`application/json`)
 
 ## Project structure
 

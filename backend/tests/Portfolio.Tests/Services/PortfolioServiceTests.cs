@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging.Abstractions;
 using Portfolio.Application.Abstractions;
 using Portfolio.Application.Services;
 using Portfolio.Domain.Entities;
@@ -11,7 +12,7 @@ public sealed class PortfolioServiceTests
     private static (PortfolioService Service, CountingPortfolioRepository Repository, IMemoryCache MemoryCache) CreateSUT()
     {
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
-        var cacheService = new MemoryCacheService(memoryCache);
+        var cacheService = new MemoryCacheService(memoryCache, NullLogger<MemoryCacheService>.Instance);
         var repository = new CountingPortfolioRepository();
         var service = new PortfolioService(repository, cacheService);
         return (service, repository, memoryCache);

@@ -29,7 +29,7 @@ const id = path.replace(/^\//, '');
 	</summary>
 	<div class="resp">
 		<p class="meta">
-			<span class="ok">200 OK</span> · <span class="ct">{type}</span> · <span class="ms" data-route-ms={path}>{ms}ms</span>
+			<span class="ok">200 OK</span> · <span class="ct" data-route-ct={path}>{type}</span> · <span class="ms" data-route-ms={path}>{ms}ms</span>
 		</p>
 		<div data-route-body={path}>
 			<slot />

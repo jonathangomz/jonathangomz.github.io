@@ -1,5 +1,4 @@
 import type { ContactLink, Job } from '../data/profile';
-import type { Project } from '../data/projects';
 import { escape, punct, str } from '../utils/json';
 
 interface AboutResponse {
@@ -8,6 +7,12 @@ interface AboutResponse {
 }
 
 type StackResponse = Record<string, string[]>;
+
+interface FetchResult<T> {
+	data: T;
+	ms: number;
+	contentType: string | null;
+}
 
 const DEFAULT_API_URL = 'http://localhost:5080';
 const REQUEST_TIMEOUT_MS = 4000;
@@ -41,7 +46,7 @@ function setApiStatus(status: 'online' | 'offline'): void {
 		statusEl.setAttribute('data-api-status', status);
 		const textEl = statusEl.querySelector<HTMLElement>('[data-api-status-text]');
 		if (textEl) {
-			textEl.textContent = status === 'online' ? 'running' : 'down';
+			textEl.textContent = status;
 		}
 	}
 }
@@ -50,6 +55,16 @@ function setRouteLatency(path: string, ms: number): void {
 	const msEl = document.querySelector<HTMLElement>(`[data-route-ms="${path}"]`);
 	if (msEl) {
 		msEl.textContent = `${Math.max(1, Math.round(ms))}ms`;
+	}
+}
+
+function setRouteContentType(path: string, contentTypeHeader: string | null): void {
+	if (!contentTypeHeader) return;
+	const mediaType = contentTypeHeader.split(';')[0]?.trim();
+	if (!mediaType) return;
+	const ctEl = document.querySelector<HTMLElement>(`[data-route-ct="${path}"]`);
+	if (ctEl) {
+		ctEl.textContent = mediaType;
 	}
 }
 
@@ -65,6 +80,50 @@ function setRouteBodyHtml(path: string, html: string): void {
 	if (bodyEl) {
 		bodyEl.innerHTML = html;
 	}
+}
+
+function parseAboutMarkdown(markdown: string): AboutResponse {
+	const blocks = markdown
+		.split(/\r?\n\s*\r?\n/)
+		.map((block) => block.trim())
+		.filter((block) => block.length > 0);
+
+	const paragraphs: string[] = [];
+	let philosophy = '';
+
+	for (const block of blocks) {
+		if (block.startsWith('>')) {
+			philosophy = block.replace(/^>\s*/, '').trim();
+		} else {
+			paragraphs.push(block);
+		}
+	}
+
+	return { paragraphs, philosophy };
+}
+
+function parseExperienceMarkdown(markdown: string): Job[] {
+	const sections = markdown
+		.split(/^###\s+/m)
+		.map((s) => s.trim())
+		.filter((s) => s.length > 0);
+
+	return sections.map((section) => {
+		const lines = section
+			.split(/\r?\n/)
+			.map((line) => line.trim())
+			.filter((line) => line.length > 0);
+
+		const company = lines[0] ?? '';
+		const metaLine = lines[1] ?? '';
+		const [role = '', period = '', location = ''] = metaLine.split('·').map((part) => part.trim());
+		const highlights = lines
+			.slice(2)
+			.filter((line) => line.startsWith('- '))
+			.map((line) => line.slice(2).trim());
+
+		return { company, role, period, location, highlights };
+	});
 }
 
 function renderAbout(about: AboutResponse): string {
@@ -106,40 +165,6 @@ function renderStack(stack: StackResponse): string {
 	return `<div class="json"><span class="p">&#123;</span><div class="json-rows">${rows}</div><span class="p">&#125;</span></div>`;
 }
 
-function renderProjects(projects: Project[]): string {
-	const cards = projects
-		.map((project) => {
-			const hrefLabel = project.hrefLabel ?? 'Go to the page';
-			const pageBtn = project.href
-				? `<a class="btn" target="_blank" href="${escape(project.href)}" rel="noreferrer">${escape(hrefLabel)}</a>`
-				: '';
-			return (
-				`<div class="card">` +
-				`<span class="card-title">${escape(project.title)}</span>` +
-				`<hr />` +
-				`<p class="card-details">${escape(project.details)}</p>` +
-				`<div class="card-actions">` +
-				pageBtn +
-				`<a class="btn btn-repo" target="_blank" href="${escape(project.repo)}" rel="noreferrer">` +
-				`${renderSocialIconSvg('github')}Repository` +
-				`</a>` +
-				`</div>` +
-				`</div>`
-			);
-		})
-		.join('');
-
-	const soonCard =
-		`<div class="card soon">` +
-		`<span class="card-title">Soon...</span>` +
-		`<hr />` +
-		`<p class="card-details">Soon more projects.</p>` +
-		`<div class="card-actions"></div>` +
-		`</div>`;
-
-	return `<div class="cards">${cards}${soonCard}</div>`;
-}
-
 function renderContact(links: ContactLink[]): string {
 	const rows = links
 		.map((link, index) => {
@@ -171,7 +196,7 @@ function updateFooterLinks(links: ContactLink[]): void {
 		.join('');
 }
 
-async function fetchJsonWithTiming<T>(baseUrl: string, path: string): Promise<{ data: T; ms: number }> {
+async function fetchJsonWithTiming<T>(baseUrl: string, path: string): Promise<FetchResult<T>> {
 	const startedAt = performance.now();
 	const response = await fetch(`${baseUrl}${path}`, {
 		headers: { Accept: 'application/json' },
@@ -184,7 +209,23 @@ async function fetchJsonWithTiming<T>(baseUrl: string, path: string): Promise<{ 
 
 	const data = (await response.json()) as T;
 	const ms = performance.now() - startedAt;
-	return { data, ms };
+	return { data, ms, contentType: response.headers.get('content-type') };
+}
+
+async function fetchTextWithTiming(baseUrl: string, path: string, accept: string): Promise<FetchResult<string>> {
+	const startedAt = performance.now();
+	const response = await fetch(`${baseUrl}${path}`, {
+		headers: { Accept: accept },
+		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+	});
+
+	if (!response.ok) {
+		throw new Error(`GET ${path} returned ${response.status}`);
+	}
+
+	const data = await response.text();
+	const ms = performance.now() - startedAt;
+	return { data, ms, contentType: response.headers.get('content-type') };
 }
 
 async function checkHealth(baseUrl: string): Promise<boolean> {
@@ -200,26 +241,34 @@ async function checkHealth(baseUrl: string): Promise<boolean> {
 
 async function hydrateRoutes(baseUrl: string): Promise<boolean> {
 	const results = await Promise.allSettled([
-		fetchJsonWithTiming<AboutResponse>(baseUrl, '/about').then(({ data, ms }) => {
-			setRouteBodyHtml('/about', renderAbout(data));
+		fetchTextWithTiming(baseUrl, '/about', 'text/markdown').then(({ data, ms, contentType }) => {
+			setRouteBodyHtml('/about', renderAbout(parseAboutMarkdown(data)));
+			setRouteContentType('/about', contentType);
 			setRouteLatency('/about', ms);
 		}),
-		fetchJsonWithTiming<Job[]>(baseUrl, '/experience').then(({ data, ms }) => {
-			setRouteBodyHtml('/experience', renderExperience(data));
+		fetchTextWithTiming(baseUrl, '/experience', 'text/markdown').then(({ data, ms, contentType }) => {
+			setRouteBodyHtml('/experience', renderExperience(parseExperienceMarkdown(data)));
+			setRouteContentType('/experience', contentType);
 			setRouteLatency('/experience', ms);
 		}),
-		fetchJsonWithTiming<StackResponse>(baseUrl, '/stack').then(({ data, ms }) => {
+		fetchJsonWithTiming<StackResponse>(baseUrl, '/stack').then(({ data, ms, contentType }) => {
 			setRouteBodyHtml('/stack', renderStack(data));
+			setRouteContentType('/stack', contentType);
 			setRouteLatency('/stack', ms);
 		}),
-		fetchJsonWithTiming<Project[]>(baseUrl, '/projects').then(({ data, ms }) => {
-			setRouteBodyHtml('/projects', renderProjects(data));
-			setRouteNote('/projects', `${data.length + 1} items`);
+		fetchTextWithTiming(baseUrl, '/projects', 'text/html').then(({ data, ms, contentType }) => {
+			setRouteBodyHtml('/projects', data);
+			const cardCount = document.querySelectorAll('[data-route-body="/projects"] .card').length;
+			if (cardCount > 0) {
+				setRouteNote('/projects', `${cardCount} items`);
+			}
+			setRouteContentType('/projects', contentType);
 			setRouteLatency('/projects', ms);
 		}),
-		fetchJsonWithTiming<ContactLink[]>(baseUrl, '/contact').then(({ data, ms }) => {
+		fetchJsonWithTiming<ContactLink[]>(baseUrl, '/contact').then(({ data, ms, contentType }) => {
 			setRouteBodyHtml('/contact', renderContact(data));
 			setRouteNote('/contact', `${data.length} links`);
+			setRouteContentType('/contact', contentType);
 			setRouteLatency('/contact', ms);
 			updateFooterLinks(data);
 		}),

@@ -1,10 +1,24 @@
 using Portfolio.Api.Endpoints;
+using Portfolio.Api.Middleware;
 using Portfolio.Application;
 using Portfolio.Infrastructure;
+using Serilog;
+using Serilog.Events;
 
 const string CorsPolicyName = "PortfolioCors";
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .MinimumLevel.Information()
+        .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .WriteTo.Console();
+});
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
@@ -25,6 +39,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
