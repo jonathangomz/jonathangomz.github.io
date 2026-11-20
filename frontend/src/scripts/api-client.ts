@@ -48,13 +48,37 @@ function renderSocialIconSvg(name: string): string {
 	);
 }
 
-function setApiStatus(status: 'online' | 'offline'): void {
+type ApiStatus = 'online' | 'rate-limited' | 'offline';
+type LogStreamStatus = 'live' | 'rate-limited' | 'offline';
+
+const API_STATUS_LABELS: Record<ApiStatus, string> = {
+	online: 'online',
+	'rate-limited': 'rate limited',
+	offline: 'offline',
+};
+
+const LOG_STREAM_STATUS_LABELS: Record<LogStreamStatus, string> = {
+	live: 'live',
+	'rate-limited': 'rate limited',
+	offline: 'offline',
+};
+
+class HttpStatusError extends Error {
+	readonly status: number;
+
+	constructor(path: string, status: number) {
+		super(`GET ${path} returned ${status}`);
+		this.status = status;
+	}
+}
+
+function setApiStatus(status: ApiStatus): void {
 	const statusEl = document.getElementById('api-status');
 	if (statusEl) {
 		statusEl.setAttribute('data-api-status', status);
 		const textEl = statusEl.querySelector<HTMLElement>('[data-api-status-text]');
 		if (textEl) {
-			textEl.textContent = status;
+			textEl.textContent = API_STATUS_LABELS[status];
 		}
 	}
 }
@@ -212,7 +236,7 @@ async function fetchJsonWithTiming<T>(baseUrl: string, path: string): Promise<Fe
 	});
 
 	if (!response.ok) {
-		throw new Error(`GET ${path} returned ${response.status}`);
+		throw new HttpStatusError(path, response.status);
 	}
 
 	const data = (await response.json()) as T;
@@ -228,7 +252,7 @@ async function fetchTextWithTiming(baseUrl: string, path: string, accept: string
 	});
 
 	if (!response.ok) {
-		throw new Error(`GET ${path} returned ${response.status}`);
+		throw new HttpStatusError(path, response.status);
 	}
 
 	const data = await response.text();
@@ -236,18 +260,24 @@ async function fetchTextWithTiming(baseUrl: string, path: string, accept: string
 	return { data, ms, contentType: response.headers.get('content-type') };
 }
 
-async function checkHealth(baseUrl: string): Promise<boolean> {
+async function checkHealth(baseUrl: string): Promise<ApiStatus> {
 	try {
 		const response = await fetch(`${baseUrl}/health`, {
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
-		return response.ok;
+		if (response.ok) {
+			return 'online';
+		}
+		if (response.status === 429) {
+			return 'rate-limited';
+		}
+		return 'offline';
 	} catch {
-		return false;
+		return 'offline';
 	}
 }
 
-async function hydrateRoutes(baseUrl: string): Promise<boolean> {
+async function hydrateRoutes(baseUrl: string): Promise<ApiStatus> {
 	const results = await Promise.allSettled([
 		fetchTextWithTiming(baseUrl, '/about', 'text/markdown').then(({ data, ms, contentType }) => {
 			setRouteBodyHtml('/about', renderAbout(parseAboutMarkdown(data)));
@@ -282,12 +312,24 @@ async function hydrateRoutes(baseUrl: string): Promise<boolean> {
 		}),
 	]);
 
-	return results.every((result) => result.status === 'fulfilled');
+	if (results.every((result) => result.status === 'fulfilled')) {
+		return 'online';
+	}
+
+	const isRateLimited = results.some(
+		(result) =>
+			result.status === 'rejected' &&
+			result.reason instanceof HttpStatusError &&
+			result.reason.status === 429,
+	);
+
+	return isRateLimited ? 'rate-limited' : 'offline';
 }
 
 export async function initPortfolioApiClient(): Promise<void> {
 	const baseUrl = getApiBaseUrl();
-	let isOnline = false;
+	let isHydrated = false;
+	let currentStatus: ApiStatus = 'offline';
 	let logEventSource: EventSource | null = null;
 	let totalLogEntries = 0;
 
@@ -298,12 +340,12 @@ export async function initPortfolioApiClient(): Promise<void> {
 	const countEl = document.querySelector<HTMLElement>('[data-log-count]');
 	const emptyEl = document.querySelector<HTMLElement>('[data-log-empty]');
 
-	function setLogStreamStatus(status: 'live' | 'offline'): void {
+	function setLogStreamStatus(status: LogStreamStatus): void {
 		if (drawerEl) {
 			drawerEl.setAttribute('data-stream-status', status);
 		}
 		if (stateEl) {
-			stateEl.textContent = status;
+			stateEl.textContent = LOG_STREAM_STATUS_LABELS[status];
 		}
 	}
 
@@ -384,24 +426,25 @@ export async function initPortfolioApiClient(): Promise<void> {
 		};
 
 		source.onerror = () => {
-			if (!isOnline || source.readyState === EventSource.CLOSED) {
-				disconnectLogStream();
+			const fallbackStatus: LogStreamStatus = currentStatus === 'rate-limited' ? 'rate-limited' : 'offline';
+			if (currentStatus !== 'online' || source.readyState === EventSource.CLOSED) {
+				disconnectLogStream(fallbackStatus);
 			}
 		};
 	}
 
-	function disconnectLogStream(): void {
+	function disconnectLogStream(status: LogStreamStatus = 'offline'): void {
 		if (logEventSource) {
 			logEventSource.close();
 			logEventSource = null;
 		}
-		setLogStreamStatus('offline');
+		setLogStreamStatus(status);
 	}
 
 	document.addEventListener('visibilitychange', () => {
 		if (document.hidden) {
-			disconnectLogStream();
-		} else if (isOnline) {
+			disconnectLogStream(currentStatus === 'rate-limited' ? 'rate-limited' : 'offline');
+		} else if (currentStatus === 'online') {
 			connectLogStream();
 		}
 	});
@@ -419,26 +462,42 @@ export async function initPortfolioApiClient(): Promise<void> {
 	}
 
 	async function syncWithApi(forceHydrate: boolean): Promise<void> {
-		const healthy = await checkHealth(baseUrl);
-		if (!healthy) {
-			isOnline = false;
+		const healthStatus = await checkHealth(baseUrl);
+		if (healthStatus === 'offline') {
+			isHydrated = false;
+			currentStatus = 'offline';
 			setApiStatus('offline');
-			disconnectLogStream();
+			disconnectLogStream('offline');
+			return;
+		}
+
+		if (healthStatus === 'rate-limited') {
+			currentStatus = 'rate-limited';
+			setApiStatus('rate-limited');
+			if (!logEventSource || logEventSource.readyState !== EventSource.OPEN) {
+				disconnectLogStream('rate-limited');
+			}
 			return;
 		}
 
 		connectLogStream();
 
-		if (forceHydrate || !isOnline) {
-			const hydrated = await hydrateRoutes(baseUrl);
-			isOnline = hydrated;
-			setApiStatus(hydrated ? 'online' : 'offline');
-			if (!hydrated) {
-				disconnectLogStream();
+		if (forceHydrate || !isHydrated) {
+			const hydrateStatus = await hydrateRoutes(baseUrl);
+			isHydrated = hydrateStatus === 'online';
+			currentStatus = hydrateStatus;
+			setApiStatus(hydrateStatus);
+			if (hydrateStatus === 'offline') {
+				disconnectLogStream('offline');
+			} else if (hydrateStatus === 'rate-limited') {
+				if (!logEventSource || logEventSource.readyState !== EventSource.OPEN) {
+					disconnectLogStream('rate-limited');
+				}
 			}
 			return;
 		}
 
+		currentStatus = 'online';
 		setApiStatus('online');
 	}
 

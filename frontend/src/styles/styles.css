@@ -7,6 +7,7 @@
 	--font-color: #9FD356;
 	--pink: #DE639A;
 	--orange: #FA824C;
+	--yellow: #FACC15;
 	--cyan: #59C3C3;
 	--dim: #6f9aa3;
 }
@@ -21,6 +22,7 @@
 	--font-color: #A5C261;
 	--pink: #B08CC4;
 	--orange: #CF7E3A;
+	--yellow: #FFC66D;
 	--cyan: #A9B7C6;
 	--dim: #9198A0;
 }
@@ -33,6 +35,7 @@
 	--font-color: #A3BE8C;
 	--pink: #B690AF;
 	--orange: #EBCB8B;
+	--yellow: #EBCB8B;
 	--cyan: #D8DEE9;
 	--dim: #9AA8BC;
 }
@@ -47,6 +50,7 @@
 	--font-color: #3F6E12;
 	--pink: #9C3A6B;
 	--orange: #9A4C18;
+	--yellow: #A16207;
 	--cyan: #24303A;
 	--dim: #5E6B75;
 	--resp-tint: 5%;
@@ -233,6 +237,15 @@ body {
 .brand .status[data-api-status="online"] .dot {
 	color: var(--font-color);
 	animation: dot-flicker 1.8s ease-in-out infinite;
+}
+
+.brand .status[data-api-status="rate-limited"] {
+	color: var(--yellow);
+}
+
+.brand .status[data-api-status="rate-limited"] .dot {
+	color: var(--yellow);
+	animation: none;
 }
 
 .brand .status[data-api-status="offline"] .dot {
@@ -703,6 +716,11 @@ span.underline-blink { animation: underline-blink 1s linear infinite; }
 
 .log-drawer[data-stream-status="live"] .log-state {
 	color: var(--font-color);
+}
+
+.log-drawer[data-stream-status="rate-limited"] .log-dot,
+.log-drawer[data-stream-status="rate-limited"] .log-state {
+	color: var(--yellow);
 }
 
 .log-drawer[data-stream-status="offline"] .log-dot {
