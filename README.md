@@ -1,8 +1,10 @@
 # jonathangomz.github.io
 
-Personal site, built with [Astro](https://astro.build) and deployed to GitHub Pages.
+Personal portfolio monorepo containing the [Astro](https://astro.build) static frontend (`frontend/`) and the .NET 11 Clean Architecture backend API (`backend/`).
 
-## Commands (run inside `frontend/`)
+The frontend renders static fallback data at build time so the site loads immediately even when offline, and hydrates live route data in parallel from the .NET 11 API when online — driving a real-time health status indicator in the header (flickering green dot when the API is online, solid red dot when offline).
+
+## Frontend Commands (run inside `frontend/`)
 
 | Command            | Action                                       |
 | :----------------- | :------------------------------------------- |
@@ -12,6 +14,26 @@ Personal site, built with [Astro](https://astro.build) and deployed to GitHub Pa
 | `pnpm run build`   | Type-check and build the site to `./dist/`    |
 | `pnpm run preview` | Preview the build locally before deploying    |
 
+Set `PUBLIC_API_URL` to point the frontend at a custom backend URL (defaults to `http://localhost:5000`).
+
+## Backend Commands (run inside `backend/`)
+
+| Command                                              | Action                                              |
+| :--------------------------------------------------- | :-------------------------------------------------- |
+| `dotnet build Portfolio.slnx`                        | Build the .NET 11 Clean Architecture solution       |
+| `dotnet test Portfolio.slnx`                         | Run xUnit unit and integration tests                |
+| `dotnet run --project src/Portfolio.Api`             | Start the Minimal API at `http://localhost:5000`    |
+
+### API Endpoints
+
+- `GET /health` — Health check endpoint (`200 OK` / `Healthy`)
+- `GET /about` — About paragraphs and engineering philosophy
+- `GET /experience` — Work experience entries
+- `GET /stack` — Technology stack grouped by category
+- `GET /projects` — Featured open-source and production projects
+- `GET /contact` — Social & contact links
+- `GET /portfolio` — Aggregated portfolio payload
+
 ## Project structure
 
 ```
@@ -20,14 +42,25 @@ frontend/
   src/
     assets/fonts/    self-hosted JetBrains Mono font
     components/      Header, Footer, Route, JsonBlock, ContactBlock, ProjectCard, SocialIcon
-    data/            profile.ts (about, experience, stack, contact), projects.ts
+    data/            profile.ts (about, experience, stack, contact), projects.ts (static fallback)
     layouts/         BaseLayout.astro — shared <head>, fonts, theme & boot scripts
     pages/           index.astro, 404.astro
+    scripts/         api-client.ts — /health polling, parallel route fetching & DOM hydration
     styles/          reset.css, styles.css
     utils/           json.ts — shared JSON formatting helpers
+
+backend/
+  Portfolio.slnx
+  src/
+    Portfolio.Domain/          Core portfolio entities (zero external dependencies)
+    Portfolio.Application/     IPortfolioRepository, ICacheService, IPortfolioService, PortfolioService
+    Portfolio.Infrastructure/  StaticPortfolioRepository, MemoryCacheService (IMemoryCache)
+    Portfolio.Api/             Minimal API endpoints, health checks, CORS, OpenAPI
+  tests/
+    Portfolio.Tests/           xUnit unit and WebApplicationFactory integration tests
 ```
 
-To add a project to the home page, append an entry to `frontend/src/data/projects.ts`.
+To add a project to the home page, update `frontend/src/data/projects.ts` (static fallback) and `backend/src/Portfolio.Infrastructure/Persistence/StaticPortfolioRepository.cs`.
 
 ## Deployment
 

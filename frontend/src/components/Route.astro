@@ -20,17 +20,19 @@ const { method = 'GET', path, note, type, ms, open = false } = Astro.props;
 const id = path.replace(/^\//, '');
 ---
 
-<details id={id} class="route" open={open}>
+<details id={id} class="route" data-route={path} open={open}>
 	<summary class="ep">
 		<span class="verb">{method}</span>
 		<span class="path">{path}</span>
-		<span class="note">{note}</span>
+		<span class="note" data-route-note={path}>{note}</span>
 		<span class="chev" aria-hidden="true"></span>
 	</summary>
 	<div class="resp">
 		<p class="meta">
-			<span class="ok">200 OK</span> · <span class="ct">{type}</span> · {ms}ms
+			<span class="ok">200 OK</span> · <span class="ct">{type}</span> · <span class="ms" data-route-ms={path}>{ms}ms</span>
 		</p>
-		<slot />
+		<div data-route-body={path}>
+			<slot />
+		</div>
 	</div>
 </details>

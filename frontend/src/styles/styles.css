@@ -225,7 +225,25 @@ body {
 	animation: boot-in 0.4s ease-out 2.0s both;
 }
 
-.brand .status .dot { color: var(--font-color); }
+.brand .status .dot {
+	color: var(--font-color);
+	transition: color 0.2s;
+}
+
+.brand .status[data-api-status="online"] .dot {
+	color: var(--font-color);
+	animation: dot-flicker 1.8s ease-in-out infinite;
+}
+
+.brand .status[data-api-status="offline"] .dot {
+	color: #ff5555;
+	animation: none;
+}
+
+@keyframes dot-flicker {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.25; }
+}
 
 /* Theme picker. Shown only when the inline script has run, so JavaScript-less
    visitors never get a control that does nothing. A native <select> carries its
@@ -688,7 +706,8 @@ footer {
 	.app-header,
 	.app-header::after,
 	footer,
-	span.underline-blink {
+	span.underline-blink,
+	.brand .status[data-api-status="online"] .dot {
 		animation: none;
 	}
 
