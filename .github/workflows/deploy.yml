@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [master]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -19,29 +22,37 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
 
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install dependencies
+        working-directory: ./frontend
         run: pnpm install --frozen-lockfile
 
       - name: Build site
+        working-directory: ./frontend
         run: pnpm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: ./dist
+          path: ./frontend/dist
 
   deploy:
     needs: build

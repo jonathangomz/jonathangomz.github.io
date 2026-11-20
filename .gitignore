@@ -1,11 +1,15 @@
-# build output
+# frontend build output & dependencies
 dist/
-
-# generated types
 .astro/
-
-# dependencies
 node_modules/
+
+# .NET build output & artifacts
+bin/
+obj/
+TestResults/
+.vs/
+*.user
+*.suo
 
 # logs
 npm-debug.log*
@@ -16,9 +20,11 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+.env.local
 
 # macOS-specific files
 .DS_Store
 
-# jetbrains setting folder
+# jetbrains & agent setting folders
 .idea/
+.junie/
