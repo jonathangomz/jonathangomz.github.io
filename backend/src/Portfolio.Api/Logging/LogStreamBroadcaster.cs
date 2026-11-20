@@ -1,17 +1,30 @@
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Threading.Channels;
+using Microsoft.Extensions.Configuration;
 
 namespace Portfolio.Api.Logging;
 
-public sealed class LogStreamBroadcaster
+public sealed class LogStreamBroadcaster(IConfiguration? configuration = null)
 {
     private const int MaxHistoryEntries = 50;
     private const int SubscriberChannelCapacity = 100;
+    private const int DefaultMaxGlobalSubscribers = 50;
+    private const int DefaultMaxConnectionDurationSeconds = 600;
+
+    private readonly int _maxGlobalSubscribers =
+        Math.Max(1, configuration?.GetValue("RateLimiting:LogStream:MaxGlobalSubscribers", DefaultMaxGlobalSubscribers) ?? DefaultMaxGlobalSubscribers);
+
+    private readonly TimeSpan _maxConnectionDuration = TimeSpan.FromSeconds(
+        Math.Max(1, configuration?.GetValue("RateLimiting:LogStream:MaxConnectionDurationSeconds", DefaultMaxConnectionDurationSeconds) ?? DefaultMaxConnectionDurationSeconds));
 
     private readonly Lock _historyLock = new();
     private readonly Queue<LogStreamEntry> _history = new(MaxHistoryEntries);
     private readonly ConcurrentDictionary<Guid, Channel<LogStreamEntry>> _subscribers = new();
+
+    public TimeSpan MaxConnectionDuration => _maxConnectionDuration;
+
+    public int ActiveSubscribersCount => _subscribers.Count;
 
     public void Publish(LogStreamEntry entry)
     {
@@ -39,8 +52,8 @@ public sealed class LogStreamBroadcaster
         }
     }
 
-    public async IAsyncEnumerable<LogStreamEntry> SubscribeAsync(
-        [EnumeratorCancellation] CancellationToken cancellationToken)
+    public bool TryCreateSubscription(
+        out IAsyncEnumerable<LogStreamEntry> stream)
     {
         var subscriberId = Guid.NewGuid();
         var channel = Channel.CreateBounded<LogStreamEntry>(new BoundedChannelOptions(SubscriberChannelCapacity)
@@ -53,10 +66,26 @@ public sealed class LogStreamBroadcaster
         List<LogStreamEntry> snapshot;
         lock (_historyLock)
         {
+            if (_subscribers.Count >= _maxGlobalSubscribers)
+            {
+                stream = AsyncEnumerable.Empty<LogStreamEntry>();
+                return false;
+            }
+
             snapshot = [.. _history];
             _subscribers[subscriberId] = channel;
         }
 
+        stream = ReadSubscriptionAsync(subscriberId, channel, snapshot);
+        return true;
+    }
+
+    private async IAsyncEnumerable<LogStreamEntry> ReadSubscriptionAsync(
+        Guid subscriberId,
+        Channel<LogStreamEntry> channel,
+        List<LogStreamEntry> snapshot,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
         try
         {
             foreach (var entry in snapshot)

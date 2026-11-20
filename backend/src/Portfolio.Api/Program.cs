@@ -48,6 +48,7 @@ builder.Services.AddCors(options =>
 var permitLimit = Math.Max(1, builder.Configuration.GetValue("RateLimiting:PermitLimit", 60));
 var windowSeconds = Math.Max(1, builder.Configuration.GetValue("RateLimiting:WindowSeconds", 60));
 var queueLimit = Math.Max(0, builder.Configuration.GetValue("RateLimiting:QueueLimit", 0));
+var logStreamMaxConcurrentPerIp = Math.Max(1, builder.Configuration.GetValue("RateLimiting:LogStream:MaxConcurrentConnectionsPerIp", 3));
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -81,6 +82,20 @@ builder.Services.AddRateLimiter(options =>
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                 QueueLimit = queueLimit,
                 AutoReplenishment = true
+            });
+    });
+
+    options.AddPolicy(PortfolioEndpoints.LogStreamRateLimitPolicy, httpContext =>
+    {
+        var partitionKey = httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
+
+        return RateLimitPartition.GetConcurrencyLimiter(
+            partitionKey,
+            _ => new ConcurrencyLimiterOptions
+            {
+                PermitLimit = logStreamMaxConcurrentPerIp,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
             });
     });
 });

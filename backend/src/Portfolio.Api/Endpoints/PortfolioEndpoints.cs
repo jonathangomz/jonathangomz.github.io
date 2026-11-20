@@ -10,6 +10,8 @@ namespace Portfolio.Api.Endpoints;
 
 public static class PortfolioEndpoints
 {
+    public const string LogStreamRateLimitPolicy = "LogStreamConcurrency";
+
     private const string MarkdownContentType = "text/markdown; charset=utf-8";
     private const string HtmlContentType = "text/html; charset=utf-8";
     private const string EventStreamContentType = "text/event-stream; charset=utf-8";
@@ -78,25 +80,40 @@ public static class PortfolioEndpoints
 
         group.MapGet("/logs/stream", async (HttpContext httpContext, LogStreamBroadcaster broadcaster, CancellationToken ct) =>
         {
+            if (!broadcaster.TryCreateSubscription(out var subscription))
+            {
+                httpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                await httpContext.Response.WriteAsJsonAsync(new
+                {
+                    error = "Maximum number of concurrent log stream subscribers reached. Please try again later.",
+                    status = StatusCodes.Status429TooManyRequests
+                }, ct);
+                return;
+            }
+
             httpContext.Response.ContentType = EventStreamContentType;
             httpContext.Response.Headers.CacheControl = "no-cache";
             httpContext.Response.Headers["X-Accel-Buffering"] = "no";
 
             await httpContext.Response.Body.FlushAsync(ct);
 
+            using var lifetimeCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            lifetimeCts.CancelAfter(broadcaster.MaxConnectionDuration);
+
             try
             {
-                await foreach (var entry in broadcaster.SubscribeAsync(ct))
+                await foreach (var entry in subscription.WithCancellation(lifetimeCts.Token))
                 {
                     var json = JsonSerializer.Serialize(entry, SseJsonOptions);
-                    await httpContext.Response.WriteAsync($"data: {json}\n\n", ct);
-                    await httpContext.Response.Body.FlushAsync(ct);
+                    await httpContext.Response.WriteAsync($"data: {json}\n\n", lifetimeCts.Token);
+                    await httpContext.Response.Body.FlushAsync(lifetimeCts.Token);
                 }
             }
-            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            catch (OperationCanceledException) when (lifetimeCts.IsCancellationRequested)
             {
             }
         })
+        .RequireRateLimiting(LogStreamRateLimitPolicy)
         .WithName("GetLogStream");
 
         return endpoints;

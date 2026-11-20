@@ -360,7 +360,7 @@ export async function initPortfolioApiClient(): Promise<void> {
 	}
 
 	function connectLogStream(): void {
-		if (logEventSource || typeof EventSource === 'undefined') {
+		if (logEventSource || typeof EventSource === 'undefined' || document.hidden) {
 			return;
 		}
 
@@ -384,7 +384,7 @@ export async function initPortfolioApiClient(): Promise<void> {
 		};
 
 		source.onerror = () => {
-			if (!isOnline) {
+			if (!isOnline || source.readyState === EventSource.CLOSED) {
 				disconnectLogStream();
 			}
 		};
@@ -397,6 +397,14 @@ export async function initPortfolioApiClient(): Promise<void> {
 		}
 		setLogStreamStatus('offline');
 	}
+
+	document.addEventListener('visibilitychange', () => {
+		if (document.hidden) {
+			disconnectLogStream();
+		} else if (isOnline) {
+			connectLogStream();
+		}
+	});
 
 	if (toggleBtn && consoleEl) {
 		toggleBtn.addEventListener('click', () => {

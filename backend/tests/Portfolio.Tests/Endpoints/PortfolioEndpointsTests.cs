@@ -269,4 +269,87 @@ public sealed class PortfolioEndpointsTests(WebApplicationFactory<Program> facto
         var body = await third.Content.ReadAsStringAsync();
         Assert.Contains("Too many requests", body);
     }
+
+    [Fact]
+    public async Task ExceedingLogStreamConcurrencyPerIp_ReturnsTooManyRequests()
+    {
+        await using var concurrencyFactory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.UseSetting("RateLimiting:LogStream:MaxConcurrentConnectionsPerIp", "1");
+        });
+
+        using var client = concurrencyFactory.CreateClient();
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        using var firstStreamResponse = await client.GetAsync(
+            "/logs/stream",
+            HttpCompletionOption.ResponseHeadersRead,
+            cts.Token);
+
+        Assert.Equal(HttpStatusCode.OK, firstStreamResponse.StatusCode);
+
+        using var secondStreamResponse = await client.GetAsync(
+            "/logs/stream",
+            HttpCompletionOption.ResponseHeadersRead,
+            cts.Token);
+
+        Assert.Equal(HttpStatusCode.TooManyRequests, secondStreamResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task ExceedingLogStreamGlobalSubscribersCap_ReturnsTooManyRequests()
+    {
+        await using var globalCapFactory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.UseSetting("RateLimiting:LogStream:MaxConcurrentConnectionsPerIp", "5");
+            builder.UseSetting("RateLimiting:LogStream:MaxGlobalSubscribers", "1");
+        });
+
+        using var client = globalCapFactory.CreateClient();
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        using var firstStreamResponse = await client.GetAsync(
+            "/logs/stream",
+            HttpCompletionOption.ResponseHeadersRead,
+            cts.Token);
+
+        Assert.Equal(HttpStatusCode.OK, firstStreamResponse.StatusCode);
+
+        using var secondStreamResponse = await client.GetAsync(
+            "/logs/stream",
+            HttpCompletionOption.ResponseHeadersRead,
+            cts.Token);
+
+        Assert.Equal(HttpStatusCode.TooManyRequests, secondStreamResponse.StatusCode);
+        var body = await secondStreamResponse.Content.ReadAsStringAsync(cts.Token);
+        Assert.Contains("Maximum number of concurrent log stream subscribers reached", body);
+    }
+
+    [Fact]
+    public async Task LogStream_AutomaticallyClosesAfterMaxConnectionDuration()
+    {
+        await using var shortDurationFactory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.UseSetting("RateLimiting:LogStream:MaxConnectionDurationSeconds", "1");
+        });
+
+        using var client = shortDurationFactory.CreateClient();
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        using var response = await client.GetAsync(
+            "/logs/stream",
+            HttpCompletionOption.ResponseHeadersRead,
+            cts.Token);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        await using var stream = await response.Content.ReadAsStreamAsync(cts.Token);
+        using var reader = new StreamReader(stream);
+
+        while (await reader.ReadLineAsync(cts.Token) is not null)
+        {
+        }
+
+        Assert.False(cts.IsCancellationRequested);
+    }
 }
