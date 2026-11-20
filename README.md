@@ -14,7 +14,7 @@ The frontend renders static fallback data at build time so the site loads immedi
 | `pnpm run build`   | Type-check and build the site to `./dist/`    |
 | `pnpm run preview` | Preview the build locally before deploying    |
 
-Set `PUBLIC_API_URL` to point the frontend at a custom backend URL (defaults to `http://localhost:5000`).
+Set `PUBLIC_API_URL` to point the frontend at a custom backend URL (defaults to `http://localhost:5080`).
 
 ## Backend Commands (run inside `backend/`)
 
@@ -22,7 +22,7 @@ Set `PUBLIC_API_URL` to point the frontend at a custom backend URL (defaults to 
 | :--------------------------------------------------- | :-------------------------------------------------- |
 | `dotnet build Portfolio.slnx`                        | Build the .NET 11 Clean Architecture solution       |
 | `dotnet test Portfolio.slnx`                         | Run xUnit unit and integration tests                |
-| `dotnet run --project src/Portfolio.Api`             | Start the Minimal API at `http://localhost:5000`    |
+| `dotnet run --project src/Portfolio.Api`             | Start the Minimal API at `http://localhost:5080`    |
 
 ### API Endpoints
 

@@ -9,7 +9,7 @@ interface AboutResponse {
 
 type StackResponse = Record<string, string[]>;
 
-const DEFAULT_API_URL = 'http://localhost:5000';
+const DEFAULT_API_URL = 'http://localhost:5080';
 const REQUEST_TIMEOUT_MS = 4000;
 const HEALTH_POLL_INTERVAL_MS = 15000;
 
@@ -39,6 +39,10 @@ function setApiStatus(status: 'online' | 'offline'): void {
 	const statusEl = document.getElementById('api-status');
 	if (statusEl) {
 		statusEl.setAttribute('data-api-status', status);
+		const textEl = statusEl.querySelector<HTMLElement>('[data-api-status-text]');
+		if (textEl) {
+			textEl.textContent = status === 'online' ? 'running' : 'down';
+		}
 	}
 }
 
