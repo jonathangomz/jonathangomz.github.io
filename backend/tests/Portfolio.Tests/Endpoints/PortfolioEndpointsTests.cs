@@ -244,4 +244,29 @@ public sealed class PortfolioEndpointsTests(WebApplicationFactory<Program> facto
         Assert.DoesNotContain(entries, e => e.Message.Contains("/unknown-malicious-path", StringComparison.Ordinal));
         Assert.DoesNotContain(entries, e => e.Message.Contains("/logs/stream", StringComparison.Ordinal));
     }
+
+    [Fact]
+    public async Task ExceedingRateLimit_ReturnsTooManyRequestsWithRetryAfterHeader()
+    {
+        await using var rateLimitedFactory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.UseSetting("RateLimiting:PermitLimit", "2");
+            builder.UseSetting("RateLimiting:WindowSeconds", "60");
+            builder.UseSetting("RateLimiting:QueueLimit", "0");
+        });
+
+        using var client = rateLimitedFactory.CreateClient();
+
+        using var first = await client.GetAsync("/about");
+        using var second = await client.GetAsync("/about");
+        using var third = await client.GetAsync("/about");
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, third.StatusCode);
+        Assert.True(third.Headers.RetryAfter?.Delta > TimeSpan.Zero);
+
+        var body = await third.Content.ReadAsStringAsync();
+        Assert.Contains("Too many requests", body);
+    }
 }

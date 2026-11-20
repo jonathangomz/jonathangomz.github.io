@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Threading.RateLimiting;
 using Portfolio.Api.Endpoints;
 using Portfolio.Api.Logging;
 using Portfolio.Api.Middleware;
@@ -43,6 +45,46 @@ builder.Services.AddCors(options =>
     });
 });
 
+var permitLimit = Math.Max(1, builder.Configuration.GetValue("RateLimiting:PermitLimit", 60));
+var windowSeconds = Math.Max(1, builder.Configuration.GetValue("RateLimiting:WindowSeconds", 60));
+var queueLimit = Math.Max(0, builder.Configuration.GetValue("RateLimiting:QueueLimit", 0));
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+        {
+            var retryAfterSeconds = Math.Max(1, (int)Math.Ceiling(retryAfter.TotalSeconds));
+            context.HttpContext.Response.Headers.RetryAfter = retryAfterSeconds.ToString(CultureInfo.InvariantCulture);
+        }
+
+        await context.HttpContext.Response.WriteAsJsonAsync(new
+        {
+            error = "Too many requests. Please try again later.",
+            status = StatusCodes.Status429TooManyRequests
+        }, cancellationToken);
+    };
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        var partitionKey = httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
+
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                Window = TimeSpan.FromSeconds(windowSeconds),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = queueLimit,
+                AutoReplenishment = true
+            });
+    });
+});
+
 var app = builder.Build();
 
 app.UseMiddleware<RequestLoggingMiddleware>();
@@ -57,6 +99,7 @@ else
 }
 
 app.UseCors(CorsPolicyName);
+app.UseRateLimiter();
 
 app.MapHealthChecks("/health");
 app.MapPortfolioEndpoints();
