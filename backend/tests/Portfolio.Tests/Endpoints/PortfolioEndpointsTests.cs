@@ -352,4 +352,33 @@ public sealed class PortfolioEndpointsTests(WebApplicationFactory<Program> facto
 
         Assert.False(cts.IsCancellationRequested);
     }
+
+    [Fact]
+    public async Task RateLimit_PartitionsSeparatelyByXForwardedForClientIp()
+    {
+        await using var rateLimitedFactory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.UseSetting("RateLimiting:PermitLimit", "1");
+            builder.UseSetting("RateLimiting:WindowSeconds", "60");
+            builder.UseSetting("RateLimiting:QueueLimit", "0");
+        });
+
+        using var client = rateLimitedFactory.CreateClient();
+
+        using var clientAFirst = new HttpRequestMessage(HttpMethod.Get, "/about");
+        clientAFirst.Headers.TryAddWithoutValidation("X-Forwarded-For", "203.0.113.10");
+        using var clientAFirstResponse = await client.SendAsync(clientAFirst);
+
+        using var clientASecond = new HttpRequestMessage(HttpMethod.Get, "/about");
+        clientASecond.Headers.TryAddWithoutValidation("X-Forwarded-For", "203.0.113.10");
+        using var clientASecondResponse = await client.SendAsync(clientASecond);
+
+        using var clientBFirst = new HttpRequestMessage(HttpMethod.Get, "/about");
+        clientBFirst.Headers.TryAddWithoutValidation("X-Forwarded-For", "198.51.100.25");
+        using var clientBFirstResponse = await client.SendAsync(clientBFirst);
+
+        Assert.Equal(HttpStatusCode.OK, clientAFirstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, clientASecondResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, clientBFirstResponse.StatusCode);
+    }
 }

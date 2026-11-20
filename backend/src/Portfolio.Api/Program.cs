@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Portfolio.Api.Endpoints;
 using Portfolio.Api.Logging;
 using Portfolio.Api.Middleware;
@@ -31,6 +32,14 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 builder.Services.AddHealthChecks();
 builder.Services.AddOpenApi();
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit = 1;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? ["https://jonathangomz.github.io", "http://localhost:4321", "http://127.0.0.1:4321"];
@@ -102,6 +111,7 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())

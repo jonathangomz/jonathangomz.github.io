@@ -1,0 +1,74 @@
+name: Deploy Backend to Azure App Service
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-azure
+  cancel-in-progress: false
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            10.0.x
+            11.0.x
+          dotnet-quality: preview
+
+      - name: Restore dependencies
+        run: dotnet restore Portfolio.slnx
+
+      - name: Build
+        run: dotnet build Portfolio.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Portfolio.slnx --configuration Release --no-build --verbosity normal
+
+      - name: Publish
+        run: dotnet publish src/Portfolio.Api/Portfolio.Api.csproj --configuration Release --no-build --output ./publish
+
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-publish
+          path: ./backend/publish
+
+  deploy:
+    needs: build-and-test
+    if: ${{ vars.AZURE_WEBAPP_NAME != '' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    steps:
+      - name: Download publish artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-publish
+          path: ./publish
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish
